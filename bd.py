@@ -1,4 +1,3 @@
-import sqlite3 as sql
 import pymysql
 import random
 
