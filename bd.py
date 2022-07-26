@@ -144,4 +144,4 @@ def GetScore(id):   # Получение количества купленных
         GetScore(id)
 
 
-Connect()
+#Connect()
