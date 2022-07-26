@@ -6,8 +6,6 @@ import config_message as cm
 from datetime import datetime
 from config import host, port, user, password, db_name, TON_NUMBER
 
-price = 200
-
 
 #cur.execute("CREATE TABLE IF NOT EXISTS `test` (`ID` INT, `NFTcount` INT, `Score` INT)")
 
@@ -58,7 +56,6 @@ def GetReadNumberScore(id):         # Получение номера тон с�
             try:
                 cursor.execute(f"SELECT ton_number FROM `base_user` WHERE telegramm_id= '{id}'")
                 row = cursor.fetchone()
-                connection.close()
                 return row['ton_number']
             except:
                 return "Вы не привязали ваш ton счет"
@@ -131,12 +128,20 @@ def GetRandNFT(data, ton_number):  # Получение рандомного н�
         Connect()
         GetRandNFT(data, ton_number)
 
-def GetScore(id):   # Получение счета
-    return "[Data Base] Eror 6666 - {Отказ в доступе}"  # DELETE AS CONFIGURATE NORM
-    with connection.cursor() as cursor:
-        cursor.execute(f"SELECT ton_number FROM `base_user` WHERE telegramm_id= '{id}'")
-        row = cursor.fetchone()
+def GetScore(id):   # Получение количества купленных NFT
 
-        return row['ton_number']
+    try:
+        ton_number = GetReadNumberScore(id)
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT COUNT(*) FROM `shop_user` WHERE ton_number= '{ton_number}'")
+                row = cursor.fetchone()
+                return row['COUNT(*)']
+            except:
+                return "Вы ещё ничего не купили"
+    except:
+        Connect()
+        GetScore(id)
+
 
 Connect()

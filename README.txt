@@ -34,6 +34,15 @@ password = "take_8206"
 db_name = "test_one"
 -----------------------------------------------------------------
 
++-----------------------+
+| Tables_in_databasenft |
++-----------------------+
+| base_nft              |
+| base_user             |
+| nft_base              |
+| shop_user             |
++-----------------------+
+
 pip install pandas
 pip install PyMySQL
 pip install pysqlite3
