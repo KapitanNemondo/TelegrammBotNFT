@@ -1,0 +1,43 @@
+Traceback (most recent call last):
+  File "urllib3\connectionpool.py", line 703, in urlopen
+  File "urllib3\connectionpool.py", line 449, in _make_request
+  File "<string>", line 3, in raise_from
+  File "urllib3\connectionpool.py", line 444, in _make_request
+  File "http\client.py", line 1374, in getresponse
+  File "http\client.py", line 318, in begin
+  File "http\client.py", line 287, in _read_status
+http.client.RemoteDisconnected: Remote end closed connection without response
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "requests\adapters.py", line 489, in send
+  File "urllib3\connectionpool.py", line 787, in urlopen
+  File "urllib3\util\retry.py", line 550, in increment
+  File "urllib3\packages\six.py", line 769, in reraise
+  File "urllib3\connectionpool.py", line 703, in urlopen
+  File "urllib3\connectionpool.py", line 449, in _make_request
+  File "<string>", line 3, in raise_from
+  File "urllib3\connectionpool.py", line 444, in _make_request
+  File "http\client.py", line 1374, in getresponse
+  File "http\client.py", line 318, in begin
+  File "http\client.py", line 287, in _read_status
+urllib3.exceptions.ProtocolError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "main.py", line 213, in <module>
+  File "telebot\__init__.py", line 621, in polling
+  File "telebot\__init__.py", line 695, in __threaded_polling
+  File "telebot\__init__.py", line 650, in __threaded_polling
+  File "telebot\util.py", line 111, in raise_exceptions
+  File "telebot\util.py", line 93, in run
+  File "telebot\__init__.py", line 360, in __retrieve_updates
+  File "telebot\__init__.py", line 338, in get_updates
+  File "telebot\apihelper.py", line 324, in get_updates
+  File "telebot\apihelper.py", line 146, in _make_request
+  File "requests\sessions.py", line 587, in request
+  File "requests\sessions.py", line 701, in send
+  File "requests\adapters.py", line 547, in send
+requests.exceptions.ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))

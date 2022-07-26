@@ -56,6 +56,3 @@ def GetTransaktion(MainTon, ChekTon, data, score):
         return False
 
 #driver.close()
-
-# if __name__ == "__main__":
-    GetTransaktion("EQCA0vWJntuL61f1-xQB2EwMorKpI448L5sh9c1kC29f8D4V", "EQArnODPRP1dMG9SQVMi6ELSeDPyZ5mi3XKPeZdIiQhrDBUS")
