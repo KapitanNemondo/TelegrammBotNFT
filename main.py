@@ -210,4 +210,4 @@ def boot_message(message):
     
 
 
-bot.polling(none_stop=True)
+bot.infinity_polling(timeout=30, long_polling_timeout = 10)

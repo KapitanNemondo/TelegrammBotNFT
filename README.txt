@@ -22,3 +22,10 @@ pass: morog_7567
 phpsetuser
 brev_prov
 
+pip install pandas
+pip install PyMySQL
+pip install pysqlite3
+pip install webdriver-manager
+pip install pyTelegramBotAPI
+pip install selenium
+pip install 
