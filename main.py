@@ -14,7 +14,8 @@ count = 0
 score = 0
 
 #main variables
-TOKEN = "5441817147:AAE7iPvtrJuWpgVcmIvvjs0snF70pdrSKvw"
+#TOKEN = "5441817147:AAE7iPvtrJuWpgVcmIvvjs0snF70pdrSKvw"
+TOKEN = "5333388269:AAF8HVwqx8MCRajkEPfU6SefzznKQy_B8hU"
 bot = telebot.TeleBot(TOKEN)
 
 
@@ -36,6 +37,9 @@ def reset(message):
 # Проверка команды старт
 @bot.message_handler(commands=['start'])
 def start_handler(message):
+
+    print(message.text[7:])
+
     global regim
     regim = 1
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)

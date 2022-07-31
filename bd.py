@@ -1,4 +1,5 @@
 import pymysql
+import sqlite3
 import random
 
 import ton_parser.main as ton_parser
@@ -12,14 +13,15 @@ from config import host, port, user, password, db_name, TON_NUMBER
 def Connect():     #Подключение к базе-данных
     global connection
     try:
-        connection = pymysql.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            database=db_name,
-            cursorclass=pymysql.cursors.DictCursor
-        )
+        connection = sqlite3.connect("databasenft.db")
+        # connection = pymysql.connect(
+        #     host=host,
+        #     port=port,
+        #     user=user,
+        #     password=password,
+        #     database=db_name,
+        #     cursorclass=pymysql.cursors.DictCursor
+        # )
         print("[DataBase] Succsfull Connect...")
     except Exception as ex:
         print("[DataBase] Connection refused...")
@@ -144,4 +146,4 @@ def GetScore(id):   # Получение количества купленных
         GetScore(id)
 
 
-#Connect()
+Connect()
