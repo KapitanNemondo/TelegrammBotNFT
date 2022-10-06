@@ -2,7 +2,7 @@ from typing import Any
 
 from selenium.webdriver.remote.webelement import WebElement
 
-from ton_parser.element_descriptor import ElementStructure, MultiElementDescriptor
+from element_descriptor import ElementStructure, MultiElementDescriptor
 
 
 class RawStructure(ElementStructure):

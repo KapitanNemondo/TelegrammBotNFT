@@ -1,4 +1,4 @@
-from ton_parser.element_descriptor import FieldDescriptor, RawStructure, MultiElementDescriptor, ElementDescriptor, ElementStructure
+from element_descriptor import FieldDescriptor, RawStructure, MultiElementDescriptor, ElementDescriptor, ElementStructure
 
 
 class InfoBlock(RawStructure):

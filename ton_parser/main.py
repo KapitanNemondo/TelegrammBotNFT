@@ -1,7 +1,8 @@
-from .parser_lib.driver import create_driver
+from parser_lib.driver import create_driver
 #from parser_lib.driver import create_driver
-from .transaction_parser.parser import TransactionParser
-from .transaction_parser.data import Transaction, TransactionType
+from transaction_parser.parser import TransactionParser
+from transaction_parser.data import Transaction, TransactionType
+
 
 import time
 from datetime import datetime
@@ -54,5 +55,7 @@ def GetTransaktion(MainTon, ChekTon, data, score):
         return True
     except:
         return False
+
+
 
 #driver.close()

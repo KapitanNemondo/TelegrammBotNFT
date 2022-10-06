@@ -2,7 +2,7 @@ from typing import Any, Optional, Tuple
 
 from selenium.webdriver.remote.webelement import WebElement
 
-from ton_parser.element_descriptor.utils import query_selector, query_selector_all
+from element_descriptor.utils import query_selector, query_selector_all
 
 
 class NullReferenceException(Exception):

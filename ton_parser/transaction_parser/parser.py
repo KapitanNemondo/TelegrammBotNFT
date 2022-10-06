@@ -1,7 +1,7 @@
 from typing import Iterable
 
-from ton_parser.transaction_parser.data import Transaction, TransactionType
-from ton_parser.transaction_parser.page_structure import Page, TransactionElement, ParticipantsBlock
+from transaction_parser.data import Transaction, TransactionType
+from transaction_parser.page_structure import Page, TransactionElement, ParticipantsBlock
 from selenium.webdriver.remote.webelement import WebElement
 
 from datetime import datetime
