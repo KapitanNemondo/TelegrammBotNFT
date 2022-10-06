@@ -87,7 +87,7 @@ def ToWriteBdNFT(id, count_nft, score): # Проверка транзакции,
 
     while (now <= data.minute + 2):
         now = datetime.now().minute
-        print("[DataMinite]", data.minute)
+        print("[DataMinute]", data.minute)
         print("[DataNow]", now)
 
         transaktion_flag = (ton_parser.GetTransaktion(TON_NUMBER, ton_number_id, data, score))
