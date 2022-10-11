@@ -34,3 +34,9 @@ def DayNews():
 
     return text + hellou + nft_score + end
 
+def BadText():
+    
+    text = "Очень сожаляем, но у тебя не получилось пройти наш тест, в связи с чем, мы вынуждены не пустить тебя дальше, но ты можешь попробовать ещё раз"
+    text += "\n" + "/start"
+    return text
+
