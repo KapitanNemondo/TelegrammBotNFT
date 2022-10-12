@@ -85,7 +85,7 @@ def ToWriteBdNFT(id, count_nft, score): # Проверка транзакции,
     data = datetime.now()
     now = datetime.now().minute
 
-    while (now <= data.minute + 2):
+    while (now <= data.minute + 1):
         now = datetime.now().minute
         print("[DataMinute]", data.minute)
         print("[DataNow]", now)

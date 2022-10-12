@@ -1,6 +1,7 @@
 from email import message
 from gc import callbacks
 from random import randint
+import re
 import telebot
 import message as ms
 from telebot import types # для указание типов
@@ -47,37 +48,46 @@ def getUserAdressNFT(message):
     global number_score
 
     
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    Yes = types.KeyboardButton("Да")
-    No = types.KeyboardButton("Нет")
-    Back = types.KeyboardButton('⬅️ Назад')
+    markup = types.InlineKeyboardMarkup()
+    # Yes = types.InlineKeyboardButton("Да", callback_data="Edit score: YES")
+    # No = types.InlineKeyboardButton("Нет", callback_data="Edit score: NO")
+    # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
 
 
-    number_score.append(message.text)
+    # number_score.append(message.text)
 
-    markup.add(Yes, No, Back)
-    bot.send_message(message.chat.id, text="Номер вашего счета совпадает?\n {text}".format(text=number_score[0]), reply_markup = markup)
+    markup.add(Back)
+    # bot.send_message(message.chat.id, text="Введите номер вашего счета, если он совпадает с выведенными номером, "
+    #                                  "нажми Да, если нет, то Нет", reply_markup = markup)
+    mesg = bot.edit_message_text(chat_id=message.chat.id, 
+                                message_id=message.id, 
+                                text="Введите номер вашего счета, если он совпадает с выведенными номером, "
+                                     "нажми Да, если нет, то Нет",
+                                reply_markup = markup)
+    return mesg
 
     
 
-    if message.text == "Да":
-        bd.ToWriteNumberScore(message.chat.id, number_score[0])
-        bot.send_message(message.chat.id, text="Номер счета успешно добавлен", reply_markup=MainMenu(message))
-        flag = False
-        flag_text = False
-        number_score.clear()
-        ChekMenu(message)
-    elif message.text == "Нет":
-        bot.send_message(message.chat.id, text="Попробуйте ещё раз")
-        flag = True
-        flag_text = False
-        number_score.clear()
-    elif message.text == '⬅️ Назад':
-        bot.send_message(message.chat.id, text="Отмена операции", reply_markup=MainMenu(message))
-        flag = False
-        flag_text = False
-        number_score.clear()
-        ChekMenu(message)
+# Получение номера тон счета, режим 4
+def getQ(message):
+    
+    global number_score
+
+    
+    markup = types.InlineKeyboardMarkup()
+    Yes = types.InlineKeyboardButton("Да", callback_data="Edit score: YES")
+    No = types.InlineKeyboardButton("Нет", callback_data="Edit score: NO")
+    # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+
+
+    # number_score.append(message.text)
+
+    markup.add(Yes, No, Back)
+
+    return markup
+
 
 # Меню покупки, режим 3
 def BuyNFT(message):
@@ -190,12 +200,18 @@ def ChekUser(message):
     )
 
 
+def ChekScore(message):
+    bot.send_message(message.chat.id,
+                        text="Номер вашего счета введён правильно?\n"
+                             f"{message.text}",
+                        reply_markup=getQ(message))
+
 # Обработка команд
 
 @bot.callback_query_handler(func = lambda call : True)
 def ChekCapcha(call):
     global capcha_id
-    message = call.message
+    # message = call.message
     if call.data == capcha_id:
 
         
@@ -220,11 +236,14 @@ def ChekCapcha(call):
         ChekMenu(call.message)
     
     elif call.data == "my buy":
-        message = call.message
-        bot.send_message(message.chat.id, text='Ваши покупки \nNFT: {count}'.format(count=bd.GetScore(message.chat.id)))
+        
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text='Ваши покупки \nNFT: {count}'.format(count=bd.GetScore(call.message.chat.id)),
+                                reply_markup=MainMenu(call.message))
 
     elif call.data == "buy nft":
-        if bd.ChekNumberScore(message.chat.id):
+        if bd.ChekNumberScore(call.message.chat.id):
 
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
@@ -237,20 +256,54 @@ def ChekCapcha(call):
 
             markup.add(back)
                     
-            bot.send_message(message.chat.id, text='Выберите покупку\n\n{news}'.format(news=ms.DayNews()), reply_markup= markup)
-            BuyNFT(message)
+            bot.send_message(call.message.chat.id, text='Выберите покупку\n\n{news}'.format(news=ms.DayNews()), reply_markup= markup)
+            BuyNFT(call.message)
                 
         else:
-            bot.send_message(message.chat.id, text='Вы не ввели номер счета 😢\nВведите номер счета для того, чтобы совершить покупку:')
+            bot.send_message(call.message.chat.id, text='Вы не ввели номер счета 😢\nВведите номер счета для того, чтобы совершить покупку:')
             flag = True
     
     elif call.data == "edit number":
-        bot.send_message(message.chat.id, text='Введите номер счета:')
-        getUserAdressNFT(message)
+        mesg = getUserAdressNFT(call.message)
+        bot.register_next_step_handler(mesg, ChekScore)
+        # getUserAdressNFT(message)
     
     elif call.data == "chek score":
-        bot.send_message(message.chat.id, text='Привязанный счет: {score}'.format(score=bd.GetReadNumberScore(message.chat.id)))
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text='Привязанный счет: {score}'.format(score=bd.GetReadNumberScore(call.message.chat.id)),
+                                reply_markup=MainMenu(call.message))
+    
+    elif call.data == "Edit score: YES":
+        bd.ToWriteNumberScore(call.message.chat.id, call.message.text)
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text="Номер счета успешно добавлен", reply_markup=MainMenu(call.message))
+        # flag = False
+        # flag_text = False
+        # number_score.clear()
+        ChekMenu(call.message)
 
+    elif call.data == "Edit score: No":
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text="Попробуйте ещё раз")
+        # flag = True
+        # flag_text = False
+        # number_score.clear()
+    
+    # elif call.data == "Edit score: Chek":
+    #     mesg = bot.edit_message_text(chat_id=call.message.chat.id, 
+    #                             message_id=call.message.id,
+    #                             text="Идёт проверка", reply_markup=getQ(call.message))
+    #     bot.register_next_step_handler(mesg, ChekScore)
+        
+
+        
+    elif call.data == "Back":
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text="Главное меню", reply_markup=MainMenu(call.message))
     else:
         bot.send_message(call.message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BadText()))
     
@@ -259,7 +312,8 @@ def ChekCapcha(call):
            
 @bot.message_handler(commands=['reset'])
 def reset(message):
-    bot.send_message(message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(message.from_user, message=ms.HellouText()), reply_markup = MainMenu(message))
+    bot.send_message(message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(message.from_user, message=ms.HellouText()))
+    ChekUser(message)
 
 # Проверка команды старт
 @bot.message_handler(commands=['start'])
@@ -297,7 +351,8 @@ def boot_message(message):
             else:
                 bot.send_message(message.chat.id, text='❌Ошибка транзакции❌')
 
-        
+        else:
+            print(message.text)
         
             # if message.text == capcha_id:
             #     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
