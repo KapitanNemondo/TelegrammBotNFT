@@ -14,7 +14,7 @@ def HellouText():
     for i in range(param["param_stage"]):
         nft_score += 'x' + str(param["param_factor"][i]) + ' NFT Container - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
     
-    end = "\nДля покупки достпуно: " + str(param["param_avalible"][param["current_stage"]] - param["param_sale"][param["current_stage"]]) + " из " + str(param["param_avalible"][param["current_stage"]]) + " по цене " + str(param["coast"]) + " TON за 1 NFT"
+    end = "\nДля покупки достпуно: " + str(param["param_avalible"][param["current_stage"] - 1] - param["param_sale"][param["current_stage"] - 1]) + " из " + str(param["param_avalible"][param["current_stage"] - 1]) + " по цене " + str(param["coast"]) + " TON за 1 NFT"
 
 
     return text + hellou + nft_score + end
@@ -32,7 +32,7 @@ def DayNews():
     for i in range(param["param_stage"]):
         nft_score += 'x' + str(param["param_factor"][i]) + ' NFT Container - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
     
-    end = "\nДля покупки достпуно: " + str(param["param_avalible"][param["current_stage"]] - param["param_sale"][param["current_stage"]]) + " из " + str(param["param_avalible"][param["current_stage"]]) + " по цене " + str(param["coast"]) + " TON за 1 NFT"
+    end = "\nДля покупки достпуно: " + str(param["param_avalible"][param["current_stage"] - 1] - param["param_sale"][param["current_stage"] - 1]) + " из " + str(param["param_avalible"][param["current_stage"] - 1]) + " по цене " + str(param["coast"]) + " TON за 1 NFT"
 
     return text + hellou + nft_score + end
 

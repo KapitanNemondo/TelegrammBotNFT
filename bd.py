@@ -1,3 +1,4 @@
+from turtle import get_shapepoly
 import pymysql
 import random
 import enum
@@ -8,12 +9,14 @@ from datetime import datetime
 from config import host, port, user, password, db_name, TON_NUMBER
 
 class ParamStatus(enum.Enum):
-    get_factor  =   0           
+    get_factor      =   0           
     """получение множителей"""
-    get_coast   =   1            
+    get_coast       =   1            
     """получение стоимости"""
-    get_news    =   2          
+    get_news        =   2          
     """получение всех данных о продажи для представления о покупке"""
+    get_sale        =   3
+    """получение достпуных карточек к покупке"""
 
 #cur.execute("CREATE TABLE IF NOT EXISTS `test` (`ID` INT, `NFTcount` INT, `Score` INT)")
 
@@ -89,23 +92,40 @@ def ChekNumberScore(id):            # Проверка наличия номер
         ChekNumberScore(id)
 
 def GetSale(id):
+    
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"SELECT `count_nft`, `score_nft` FROM `desired_purchase` WHERE telegramm_id= '{id}'")
+                cursor.execute(f"SELECT `count_nft`, `score_nft`, `purch_ratio` FROM `desired_purchase` WHERE telegramm_id= '{id}'")
                 row = cursor.fetchone()
-                return row['count_nft'], row['score_nft']
+                return row['count_nft'], row['score_nft'], row['purch_ratio']
             except:
-                return 'False', 'False'
+                return 'False', 'False', 'False'
     except:
         Connect()
         GetSale(id)
 
+def EditCount(index):
+    
+    try:
+        sale = GetParam(ParamStatus.get_sale, index)
+        # print("Sale:", sale)
+        # print("Param:", index)
+        new_sale = sale + 1
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"UPDATE `settings_shop` SET `sale` = '{new_sale}' WHERE `index` = '{index}'")
+            except:
+                pass
+    except:
+        pass
+
 def ToWriteBdNFT(id): # Проверка транзакции, в случае успеха запись данных в БД
 
-    count_nft, score = GetSale(id)
+    
+    count_nft, score, index = GetSale(id)
 
-    if count_nft != 'False' and score != 'False':
+    if count_nft != 'False' and score != 'False' and index != 'False':
 
         flag_transaktion = False
 
@@ -135,6 +155,8 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
                 if rand_number == 6666:
                     print("[Data Base]", "Eror 6666 - {Отказ в доступе}")
                     return False  
+                
+                EditCount(index)
 
 
                 
@@ -163,8 +185,7 @@ def GetRandNFT(data, ton_number, id_user):  # Получение рандомн�
             except:
                 return 6666
     except:
-        Connect()
-        GetRandNFT(data, ton_number)
+        pass
 
 def GetScore(id):   # Получение количества купленных NFT
 
@@ -222,12 +243,10 @@ def GetStatusNFT():
                 return "Вы ещё ничего не купили"
 
 
-def GetParam(paramStat : ParamStatus):      # Получение информации из БД о количетсве доступных НФТ для продажи
+def GetParam(paramStat : ParamStatus, index = None):      # Получение информации из БД о количетсве доступных НФТ для продажи
 
     data_config = GetConfigNFT()                                            # Получение данных из БД о настройках покупки
     data_status = GetStatusNFT()
-
-    count_stage = data_status[0]['count_stage']
 
     param = {
         "current_stage"     : int(),
@@ -240,7 +259,7 @@ def GetParam(paramStat : ParamStatus):      # Получение информа�
         "param_sale"        : [],
     }
 
-    param["param_stage"] = param_stage = len(data_config)
+    param["param_stage"] = param_stage = data_status[0]["count_stage"]
     param_factor = []
     param_avalible = []
     param_status = []
@@ -270,9 +289,13 @@ def GetParam(paramStat : ParamStatus):      # Получение информа�
             param["param_sale"].append(data_config[i]['sale'])
 
         return param
+    
+    elif paramStat == ParamStatus.get_sale:
+        return data_config[index]['sale']
 
     
-def NewSale(id, count_nft, score):
+def NewSale(id, count_nft, score, index):
+    # print("Param_Factor:", param_factor)
     try:
         with connection.cursor() as cursor:
             try:
@@ -281,15 +304,15 @@ def NewSale(id, count_nft, score):
                 count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
 
                 if  count_records == 0:
-                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`) VALUES ('{id}','{count_nft}','{score}')")
+                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`) VALUES ('{id}','{count_nft}','{score}', '{index}')")
                 else:
-                    cursor.execute(f"UPDATE `desired_purchase` SET `count_nft`='{count_nft}',`score_nft`='{score}' WHERE telegramm_id = '{id}'")
+                    cursor.execute(f"UPDATE `desired_purchase` SET `count_nft`='{count_nft}',`score_nft`='{score}', `purch_ratio`='{index}' WHERE telegramm_id = '{id}'")
 
             except:
                 pass
             connection.commit()
     except:
         Connect()
-        NewSale(id, count_nft, score)
+        NewSale(id, count_nft, score, index)
 
 #Connect()

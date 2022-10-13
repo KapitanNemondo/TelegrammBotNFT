@@ -11,7 +11,7 @@ mysql> CREATE TABLE base_user (telegramm_id BIGINT UNIQUE, telegramm_url TEXT, t
 
 mysql> CREATE TABLE shop_user (data TEXT,time TEXT, telegramm_id BIGINT, ton_number TEXT, nft_id INTEGER UNIQUE);
 
-mysql> CREATE TABLE desired_purchase (telegramm_id BIGINT UNIQUE, count_nft INTEGER, score_nft INTEGER);
+mysql> CREATE TABLE desired_purchase (telegramm_id BIGINT UNIQUE, count_nft INTEGER, score_nft INTEGER, purch_ratio INTEGER);
 
 phpmyadmin
 pass: morog_7567
