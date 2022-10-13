@@ -144,4 +144,19 @@ def GetScore(id):   # Получение количества купленных
         GetScore(id)
 
 
+
+def GetConfigNFT():
+    try:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `settings_shop`")
+                row = cursor.fetchall()
+                return row
+            except:
+                return "Вы ещё ничего не купили"
+    except:
+        Connect()
+        GetConfigNFT()
+
+print(GetConfigNFT())
 #Connect()
