@@ -39,7 +39,7 @@ def NewUserNFT(id, teg):  # Добавление нового пользоват
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`) VALUES ('{id}','{teg}','{''}')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`, `login`, `passwd`) VALUES ('{id}','{teg}','{''}', '{''}', '{''}')")
             except:
                 pass
             connection.commit()
@@ -64,7 +64,10 @@ def GetReadNumberScore(id):         # Получение номера тон с�
             try:
                 cursor.execute(f"SELECT ton_number FROM `base_user` WHERE telegramm_id= '{id}'")
                 row = cursor.fetchone()
-                return row['ton_number']
+                if len(row['ton_number']) > 0 or row['ton_number'] != '':
+                    return row['ton_number']
+                else:
+                    return "Вы не привязали ваш ton счет"
             except:
                 return "Вы не привязали ваш ton счет"
     except:
@@ -116,7 +119,8 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
             print("[DataMinute]", data.minute)
             print("[DataNow]", now)
 
-            transaktion_flag = (ton_parser.GetTransaktion(TON_NUMBER, ton_number_id, data, score))
+            # transaktion_flag = (ton_parser.GetTransaktion(TON_NUMBER, ton_number_id, data, score))
+            transaktion_flag = True
             if transaktion_flag:
                 break
         

@@ -23,7 +23,7 @@ flag_capcha = False
 capcha_id = -1
 
 #main variables
-TOKEN = "5441817147:AAE7iPvtrJuWpgVcmIvvjs0snF70pdrSKvw"
+TOKEN = "5628398708:AAEL5B1CuGzQ4tHTF4Y6hjXyflL2Do2fjYU"
 bot = telebot.TeleBot(TOKEN)
 
 def DotMenu(message):
@@ -103,10 +103,10 @@ def BuyNFT(message):
             bot.send_message(message.chat.id, text="Для покупки отправьте: {score} Ton\nНа счет:".format(score= score))
             bot.send_message(message.chat.id, text=bd.TON_NUMBER)
 
-            succsfull = types.KeyboardButton("💎Подтвердить перевод💎")
-            back = types.KeyboardButton("⬅️ Назад")
+            markup = types.InlineKeyboardMarkup()
+            succsfull = types.InlineKeyboardButton("💎Подтвердить перевод💎", callback_data='transfer_conf')
+            back = types.InlineKeyboardButton("⬅️ Назад", callback_data='Back')
 
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(succsfull, back)
 
             flag_stage = False
@@ -303,7 +303,25 @@ def ChekCapcha(call):
     #                             text="Идёт проверка", reply_markup=getQ(call.message))
     #     bot.register_next_step_handler(mesg, ChekScore)
         
+    elif call.data == "transfer_conf":
+        flag = bd.ToWriteBdNFT(call.message.chat.id)
+        count, score = bd.GetSale(call.message.chat.id)
 
+        if flag:
+
+            markup = types.InlineKeyboardMarkup()
+            btn2 = types.InlineKeyboardButton("💵 Купить NFT", callback_data="buy nft")
+            back = types.InlineKeyboardButton("⬅️ Назад", callback_data='Back')
+
+            markup.add(btn2, back)
+
+            bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text='Вы успешно купили {count} слонов'.format(count=count), reply_markup=markup)
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text='❌Ошибка транзакции❌', reply_markup=MainMenu())
         
     elif call.data == "Back":
         bot.edit_message_text(chat_id=call.message.chat.id, 
@@ -348,16 +366,16 @@ def boot_message(message):
         elif message.text[:8] == 'Купить x':
             BuyNFT(message)
 
-        elif message.text == '💎Подтвердить перевод💎':
-            flag = bd.ToWriteBdNFT(message.chat.id)
+        # elif message.text == '💎Подтвердить перевод💎':
+        #     flag = bd.ToWriteBdNFT(message.chat.id)
 
-            if flag:
-                bot.send_message(message.chat.id, text='Вы успешно купили {count} слонов'.format(count=count))
-            else:
-                bot.send_message(message.chat.id, text='❌Ошибка транзакции❌')
+        #     if flag:
+        #         bot.send_message(message.chat.id, text='Вы успешно купили {count} слонов'.format(count=count))
+        #     else:
+        #         bot.send_message(message.chat.id, text='❌Ошибка транзакции❌')
 
-        else:
-            print(message.text)
+        # else:
+        #     print(message.text)
         
             # if message.text == capcha_id:
             #     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
