@@ -226,7 +226,8 @@ def ChekCapcha(call):
                                 reply_markup=markup)
 
     elif call.data == "login":
-        bd.NewUserNFT(call.message.chat.id)
+
+        bd.NewUserNFT(call.message.chat.id, f"@{call.message.chat.username}")
 
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
@@ -275,10 +276,12 @@ def ChekCapcha(call):
                                 reply_markup=MainMenu(call.message))
     
     elif call.data == "Edit score: YES":
-        bd.ToWriteNumberScore(call.message.chat.id, call.message.text)
+        index = call.message.text.find("\n") + 1
+        # print(call.message.text[index:])
+        bd.ToWriteNumberScore(call.message.chat.id, call.message.text[index:])
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text="Номер счета успешно добавлен", reply_markup=MainMenu(call.message))
+                                text="Номер счета успешно изменён", reply_markup=MainMenu(call.message))
         # flag = False
         # flag_text = False
         # number_score.clear()

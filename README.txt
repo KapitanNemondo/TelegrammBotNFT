@@ -3,9 +3,9 @@ mysql> use test_one;
 
 mysql> CREATE TABLE base_nft (nft_id INTEGER UNIQUE, acsess TEXT, type TEXT);
 
-mysql> CREATE TABLE base_user (telegramm_id BIGINT UNIQUE, ton_number TEXT);
+mysql> CREATE TABLE base_user (telegramm_id BIGINT UNIQUE, telegramm_url TEXT, ton_number TEXT);
 
-mysql> CREATE TABLE shop_user (data TEXT,time TEXT,ton_number TEXT, nft_id INTEGER);
+mysql> CREATE TABLE shop_user (data TEXT,time TEXT, telegramm_id BIGINT, ton_number TEXT, nft_id INTEGER);
 
 phpmyadmin
 pass: morog_7567
@@ -17,6 +17,14 @@ Take_82A06
 SHOW DATABASES;
 
 databasenft
+
+--------------------------PHP шлюз---------------------------
+host = "localhost"
+port = 3307
+user = "bot"
+password = "Take_82A06"
+db_name = "databasenft"
+-----------------------------------------------------------------
 
 --------------------------Рабочий шлюз---------------------------
 host = "localhost"

@@ -26,12 +26,12 @@ def Connect():     #Подключение к базе-данных
         print("[DataBase]", ex)
 
 
-def NewUserNFT(id):  # Добавление нового пользователя
+def NewUserNFT(id, teg):  # Добавление нового пользователя
     
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"INSERT INTO `base_user` VALUES ('{id}', '{''}')")
+                cursor.execute(f"INSERT INTO `base_user` VALUES ('{id}', '{teg}', '{''}')")
             except:
                 pass
             connection.commit()
@@ -100,7 +100,7 @@ def ToWriteBdNFT(id, count_nft, score): # Проверка транзакции,
 
         # with connection.cursor() as cursor:
         for i in range(count_nft):  
-            rand_number = GetRandNFT(data, ton_number_id)
+            rand_number = GetRandNFT(data, ton_number_id, id)
 
             if rand_number == 6666:
                 print("[Data Base]", "Eror 6666 - {Отказ в доступе}")
@@ -110,7 +110,7 @@ def ToWriteBdNFT(id, count_nft, score): # Проверка транзакции,
 
     return False
 
-def GetRandNFT(data, ton_number):  # Получение рандомного номера из базы данных и запись даты, времени, номера и id покупки
+def GetRandNFT(data, ton_number, id_user):  # Получение рандомного номера из базы данных и запись даты, времени, номера и id покупки
     try:
         with connection.cursor() as cursor:
             try:
@@ -119,7 +119,7 @@ def GetRandNFT(data, ton_number):  # Получение рандомного н�
                 id_nft = (row[random.randrange(len(row))]['nft_id'])
 
                 cursor.execute(f"UPDATE base_nft SET acsess = 'NO' WHERE nft_id= '{id_nft}'")
-                cursor.execute(f"INSERT INTO `shop_user` VALUES ('{str(data.date())}', '{str(data.time())}', '{ton_number}', '{id_nft}')")
+                cursor.execute(f"INSERT INTO `shop_user` VALUES ('{str(data.date())}', '{str(data.time())}', '{id_user}', '{ton_number}', '{id_nft}')")
                 connection.commit()
                 return id_nft
             except:
