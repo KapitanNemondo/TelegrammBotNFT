@@ -26,18 +26,23 @@ def Connect():     #Подключение к базе-данных
         print("[DataBase]", ex)
 
 
-def NewUserNFT(id):  # Добавление нового пользователя
+def NewUserNFT(id, teg):  # Добавление нового пользователя
     
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"INSERT INTO `base_user` VALUES ('{id}', '{''}')")
+                cursor.execute(f"INSERT INTO `base_user` VALUES ('{id}', '{teg}', '{''}')")
             except:
                 pass
             connection.commit()
     except:
         Connect()
-        NewUserNFT(id)
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"INSERT INTO `base_user` VALUES ('{id}', '{teg}', '{''}')")
+            except:
+                pass
+            connection.commit()
     
 
 def ToWriteNumberScore(id, adress): # Запись номера тон счета с привязкой к id
@@ -61,7 +66,13 @@ def GetReadNumberScore(id):         # Получение номера тон с�
                 return "Вы не привязали ваш ton счет"
     except:
         Connect()
-        GetReadNumberScore(id)
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT ton_number FROM `base_user` WHERE telegramm_id= '{id}'")
+                row = cursor.fetchone()
+                return row['ton_number']
+            except:
+                return "Вы не привязали ваш ton счет"
 
 def ChekNumberScore(id):            # Проверка наличия номер тон счета
     try:
@@ -75,7 +86,14 @@ def ChekNumberScore(id):            # Проверка наличия номер
                 return False
     except:
         Connect()
-        ChekNumberScore(id)
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT ton_number FROM `base_user` WHERE telegramm_id= '{id}'")
+            row = cursor.fetchone()['ton_number']
+            
+            if row != '':
+                return True
+            else:
+                return False
 
 def ToWriteBdNFT(id, count_nft, score): # Проверка транзакции, в случае успеха запись данных в БД
     flag_transaktion = False
@@ -100,7 +118,7 @@ def ToWriteBdNFT(id, count_nft, score): # Проверка транзакции,
 
         # with connection.cursor() as cursor:
         for i in range(count_nft):  
-            rand_number = GetRandNFT(data, ton_number_id)
+            rand_number = GetRandNFT(data, ton_number_id, id)
 
             if rand_number == 6666:
                 print("[Data Base]", "Eror 6666 - {Отказ в доступе}")
@@ -110,7 +128,7 @@ def ToWriteBdNFT(id, count_nft, score): # Проверка транзакции,
 
     return False
 
-def GetRandNFT(data, ton_number):  # Получение рандомного номера из базы данных и запись даты, времени, номера и id покупки
+def GetRandNFT(data, ton_number, id_user):  # Получение рандомного номера из базы данных и запись даты, времени, номера и id покупки
     try:
         with connection.cursor() as cursor:
             try:
@@ -119,14 +137,26 @@ def GetRandNFT(data, ton_number):  # Получение рандомного н�
                 id_nft = (row[random.randrange(len(row))]['nft_id'])
 
                 cursor.execute(f"UPDATE base_nft SET acsess = 'NO' WHERE nft_id= '{id_nft}'")
-                cursor.execute(f"INSERT INTO `shop_user` VALUES ('{str(data.date())}', '{str(data.time())}', '{ton_number}', '{id_nft}')")
+                cursor.execute(f"INSERT INTO `shop_user` VALUES ('{str(data.date())}', '{str(data.time())}', '{id_user}', '{ton_number}', '{id_nft}')")
                 connection.commit()
                 return id_nft
             except:
                 return 6666
     except:
         Connect()
-        GetRandNFT(data, ton_number)
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT nft_id FROM `base_nft` WHERE acsess= 'YES'")
+                row = cursor.fetchall()
+                id_nft = (row[random.randrange(len(row))]['nft_id'])
+
+                cursor.execute(f"UPDATE base_nft SET acsess = 'NO' WHERE nft_id= '{id_nft}'")
+                cursor.execute(f"INSERT INTO `shop_user` VALUES ('{str(data.date())}', '{str(data.time())}', '{id_user}', '{ton_number}', '{id_nft}')")
+    
+                connection.commit()
+                return id_nft
+            except:
+                return 6666
 
 def GetScore(id):   # Получение количества купленных NFT
 
@@ -141,7 +171,33 @@ def GetScore(id):   # Получение количества купленных
                 return "Вы ещё ничего не купили"
     except:
         Connect()
-        GetScore(id)
+        ton_number = GetReadNumberScore(id)
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT COUNT(*) FROM `shop_user` WHERE ton_number= '{ton_number}'")
+                row = cursor.fetchone()
+                return row['COUNT(*)']
+            except:
+                return "Вы ещё ничего не купили"
+
+def GetConfigNFT():
+    try:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `settings_shop`")
+                row = cursor.fetchall()
+                return row
+            except:
+                return "Вы ещё ничего не купили"
+    except:
+        Connect()
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("SELECT * FROM `settings_shop`")
+                row = cursor.fetchall()
+                return row
+            except:
+                return "Вы ещё ничего не купили"
 
 
 #Connect()

@@ -1,4 +1,7 @@
 import pandas as pd
+import bd
+
+# print(bd.GetConfigNFT())
 
 name_file = 'Config NFT.xlsx'
 

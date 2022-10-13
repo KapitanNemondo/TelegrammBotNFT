@@ -1,6 +1,12 @@
 from config import host, port, user, password, db_name
 import pymysql
 
+
+"""
+Создание в базе данных информации о NFT и их ID
+"""
+
+
 #Подключение к базе-данных
 try:
     connection = pymysql.connect(
