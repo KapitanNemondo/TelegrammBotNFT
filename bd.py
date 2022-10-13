@@ -139,8 +139,8 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
             print("[DataMinute]", data.minute)
             print("[DataNow]", now)
 
-            # transaktion_flag = (ton_parser.GetTransaktion(TON_NUMBER, ton_number_id, data, score))
-            transaktion_flag = True
+            transaktion_flag = (ton_parser.GetTransaktion(TON_NUMBER, ton_number_id, data, score))
+            # transaktion_flag = True
             if transaktion_flag:
                 break
         
