@@ -1,4 +1,11 @@
 import pandas as pd
+# import bd
+
+data_settings_shop = [{'purch_ratio': 3, 'avalible': 200, 'sale': 0, 'status': 'завершён'}, 
+                      {'purch_ratio': 4, 'avalible': 100, 'sale': 0, 'status': 'идёт в данный момент'},
+                      {'purch_ratio': 2, 'avalible': 300, 'sale': 0, 'status': 'идёт в данный момент'},
+                      {'purch_ratio': 2, 'avalible': 300, 'sale': 0, 'status': 'идёт в данный момент'}
+                      ]
 
 name_file = 'Config NFT.xlsx'
 
@@ -12,6 +19,30 @@ param_stage = int(file['Количество этап продажи'].tolist()[
 param_cost = file['Цена'].tolist()[0]                               # Цена покупки
 param_nft_avalible = file['Куплено'].tolist()                       # Достпуно в данный момент
 nft_all = 0                                                         # Всего
+
+
+# def GetParam():
+
+#     file = bd.GetConfigNFT()                                            # Получение данных из БД о настройках покупки
+
+#     param_stage = 4
+#     param_factor = file['purch_ratio'].tolist()                         # Коэффициент покупки
+#     param_number = file['avalible'].tolist()                            # Количество доступных NFT
+#     param_status = file['status'].tolist()                              # Статус этапов
+#     # param_cur_stage = int(file['Текущий Этап'].tolist()[0])             # Текущий этап                                         
+#     # param_stage = int(file['Количество этап продажи'].tolist()[0])      # Количество этап продажи
+#     # param_cost = file['Цена'].tolist()[0]                               # Цена продажи
+#     # param_nft_avalible = file['Куплено'].tolist()                       # Достпуно в данный момент
+    
+#     print(param_factor)
+#     print(param_number)
+#     print(param_status)
+
+#     for index in range(param_stage):
+#         if param_status[index] == "идёт в данный момент":
+#             nft_all = param_number[index]
+#             print(nft_all)
+
 
 
 def GetParam():

@@ -91,17 +91,15 @@ def getQ(message):
 
 # Меню покупки, режим 3
 def BuyNFT(message):
-
-    global count, score
                 
-    ms.c_m.GetParam()
+    param = bd.GetParam(bd.ParamStatus.get_news)
 
     count = int(message.text[8:].replace('NFT', ''))
     
-    for index in range(ms.c_m.param_stage):
-        if ms.c_m.param_factor[index] == count and ms.c_m.param_status[index] == 'идёт в данный момент':
-            ms.c_m.GetParam()
-            score = count * ms.c_m.param_cost
+    for index in range(param["param_stage"]):
+        if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент':
+
+            score = count * param["coast"]
             bot.send_message(message.chat.id, text="Для покупки отправьте: {score} Ton\nНа счет:".format(score= score))
             bot.send_message(message.chat.id, text=bd.TON_NUMBER)
 
@@ -114,6 +112,8 @@ def BuyNFT(message):
             flag_stage = False
 
             bot.send_message(message.chat.id, text="После перевода подтвердите перевод", reply_markup=markup)
+
+            bd.NewSale(message.chat.id, count, score)
 
             break
                     
@@ -248,9 +248,11 @@ def ChekCapcha(call):
 
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
+            param_stage, param_factor = bd.GetParam(bd.ParamStatus.get_factor)
+
             btn = []
-            for i in range(ms.c_m.param_stage):
-                btn.append(types.KeyboardButton("Купить x{factor} NFT".format(factor=ms.c_m.param_factor[i])))
+            for i in range(param_stage):
+                btn.append(types.KeyboardButton("Купить x{factor} NFT".format(factor=param_factor[i])))
                 markup.add(btn[i])
                     
             back = types.KeyboardButton("⬅️ Назад")
@@ -347,7 +349,7 @@ def boot_message(message):
             BuyNFT(message)
 
         elif message.text == '💎Подтвердить перевод💎':
-            flag = bd.ToWriteBdNFT(message.chat.id, count, score)
+            flag = bd.ToWriteBdNFT(message.chat.id)
 
             if flag:
                 bot.send_message(message.chat.id, text='Вы успешно купили {count} слонов'.format(count=count))

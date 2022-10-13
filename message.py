@@ -1,36 +1,38 @@
 import config_message as c_m
+import bd
 
 
 # Вывод текста при первом запуске бота, при вызове команды /start
 def HellouText():
-    c_m.GetParam()
+    param = bd.GetParam(bd.ParamStatus.get_news)
 
-    text = "TRACE NFT Presale. Продажа x" + str(c_m.param_factor[c_m.param_cur_stage - 1]) + " Contairse \n \n"
-    hellou = "Добро пожаловать в бот для пересейла первых NFT Container. \nПродажа пройдёт в " + str(c_m.param_stage) + " этапа:\n\n"
+    text = "TRACE NFT Presale. Продажа x" + str(param["current_stage"]) + " Contairse \n \n"
+    hellou = "Добро пожаловать в бот для пересейла первых NFT Container. \nПродажа пройдёт в " + str(param["count_stage"]) + " этапа:\n\n"
 
     nft_score = ""
 
-    for i in range(c_m.param_stage):
-        nft_score += 'x' + str(c_m.param_factor[i]) + ' NFT Container - ' + str(c_m.param_number[i]) + ' штук - ' + str(c_m.param_status[i]) + '\n'
+    for i in range(param["param_stage"]):
+        nft_score += 'x' + str(param["param_factor"][i]) + ' NFT Container - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
     
-    end = "\nДля покупки достпуно: " + str(c_m.param_nft_avalible[c_m.param_cur_stage - 1]) + " из " + str(c_m.nft_all) + " по цене " + str(c_m.param_cost) + " TON за 1 NFT"
+    end = "\nДля покупки достпуно: " + str(param["param_avalible"][param["current_stage"]] - param["param_sale"][param["current_stage"]]) + " из " + str(param["param_avalible"][param["current_stage"]]) + " по цене " + str(param["coast"]) + " TON за 1 NFT"
+
 
     return text + hellou + nft_score + end
 
 
 # Вывод текста в любое другое время
 def DayNews():
-    c_m.GetParam()
+    param = bd.GetParam(bd.ParamStatus.get_news)
 
-    text = "💎TON ELEPHANTS💎\n" + "TRACE NFT Presale. Продажа x" + str(c_m.param_factor[c_m.param_cur_stage - 1]) + " Contairse \n \n"
-    hellou = "Продажа проходит в " + str(c_m.param_stage) + " этапа:\n\n"
+    text = "💎TON ELEPHANTS💎\n" + "TRACE NFT Presale. Продажа x" + str(param["current_stage"]) + " Contairse \n \n"
+    hellou = "Продажа проходит в " + str(param["count_stage"]) + " этапа:\n\n"
 
     nft_score = ""
 
-    for i in range(c_m.param_stage):
-        nft_score += 'x' + str(c_m.param_factor[i]) + ' NFT Container - ' + str(c_m.param_number[i]) + ' штук - ' + str(c_m.param_status[i]) + '\n'
+    for i in range(param["param_stage"]):
+        nft_score += 'x' + str(param["param_factor"][i]) + ' NFT Container - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
     
-    end = "\nДля покупки достпуно: " + str(c_m.param_nft_avalible[c_m.param_cur_stage - 1]) + " из " + str(c_m.nft_all) + " по цене " + str(c_m.param_cost) + " TON за 1 NFT"
+    end = "\nДля покупки достпуно: " + str(param["param_avalible"][param["current_stage"]] - param["param_sale"][param["current_stage"]]) + " из " + str(param["param_avalible"][param["current_stage"]]) + " по цене " + str(param["coast"]) + " TON за 1 NFT"
 
     return text + hellou + nft_score + end
 
