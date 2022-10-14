@@ -349,7 +349,7 @@ def SetCapcha(id, capcha_id):
                 row = cursor.fetchone()
                 count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
 
-                print(count_records)
+                # print(count_records)
 
                 if  count_records == 0:
                     cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `capcha_id`) VALUES ('{id}','{capcha_id}')")
