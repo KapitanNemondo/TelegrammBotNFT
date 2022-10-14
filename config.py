@@ -10,4 +10,4 @@ user = "bot"
 password = "Take_82A06"
 db_name = "NFT_Sale"
 
-TON_NUMBER = "EQCA0vWJntuL61f1-xQB2EwMorKpI448L5sh9c1kC29f8D4V"
+# TON_NUMBER = "EQCA0vWJntuL61f1-xQB2EwMorKpI448L5sh9c1kC29f8D4V"

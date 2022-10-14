@@ -84,11 +84,12 @@ def BuyNFT(message):
     count = int(message.text[8:].replace('NFT', ''))
     
     for index in range(param["count_stage"]):
-        if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент' and param["param_sale"][index] < param["param_avalible"][index]:
+        if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент' and (param["param_avalible"][index] - param["param_sale"][index]) > 0:
 
             score = count * param["coast"]
             bot.send_message(message.chat.id, text="Для покупки отправьте: {score} Ton\nНа счет:".format(score= score))
-            bot.send_message(message.chat.id, text=bd.TON_NUMBER)
+
+            bot.send_message(message.chat.id, text=f"`{bd.GetParam(bd.ParamStatus.get_mainTON)}`", parse_mode="Markdown")
 
             markup = types.InlineKeyboardMarkup()
             succsfull = types.InlineKeyboardButton("💎Подтвердить перевод💎", callback_data='transfer_conf')

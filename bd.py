@@ -5,7 +5,7 @@ import enum
 
 import ton_parser.main as ton_parser
 from datetime import datetime
-from config import host, port, user, password, db_name, TON_NUMBER
+from config import host, port, user, password, db_name
 
 class ParamStatus(enum.Enum):
     get_factor      =   0           
@@ -16,6 +16,8 @@ class ParamStatus(enum.Enum):
     """получение всех данных о продажи для представления о покупке"""
     get_sale        =   3
     """получение достпуных карточек к покупке"""
+    get_mainTON     =   4
+    """получение главного тон счета"""
 
 #cur.execute("CREATE TABLE IF NOT EXISTS `test` (`ID` INT, `NFTcount` INT, `Score` INT)")
 
@@ -48,7 +50,7 @@ def NewUserNFT(id, teg):  # Добавление нового пользоват
     except:
         Connect()
         NewUserNFT(id)
-    
+
 
 def ToWriteNumberScore(id, adress): # Запись номера тон счета с привязкой к id
     try:
@@ -90,7 +92,7 @@ def ChekNumberScore(id):            # Проверка наличия номер
         Connect()
         ChekNumberScore(id)
 
-def GetSale(id):
+def GetSale(id):                    # Получение информации о будующей покупке пользователя
     
     try:
         with connection.cursor() as cursor:
@@ -104,7 +106,7 @@ def GetSale(id):
         Connect()
         GetSale(id)
 
-def EditCount(index):
+def EditCount(index):               # Редактирование числа оставшихся нфт
     
     try:
         sale = GetParam(ParamStatus.get_sale, index)
@@ -138,7 +140,7 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
             print("[DataMinute]", data.minute)
             print("[DataNow]", now)
 
-            transaktion_flag = (ton_parser.GetTransaktion(TON_NUMBER, ton_number_id, data, score))
+            transaktion_flag = (ton_parser.GetTransaktion(GetParam(ParamStatus.get_mainTON), ton_number_id, data, score))
             # transaktion_flag = True
             if transaktion_flag:
                 break
@@ -203,7 +205,7 @@ def GetScore(id):   # Получение количества купленных
 
 
 
-def GetConfigNFT():
+def GetConfigNFT():                 # Получение настроек продаж
     try:
         with connection.cursor() as cursor:
             try:
@@ -222,7 +224,7 @@ def GetConfigNFT():
             except:
                 return "Вы ещё ничего не купили"
 
-def GetStatusNFT():
+def GetStatusNFT():                 # получение главных параметров продаж
     try:
         with connection.cursor() as cursor:
             try:
@@ -230,7 +232,7 @@ def GetStatusNFT():
                 row = cursor.fetchall()
                 return row
             except:
-                return "Вы ещё ничего не купили"
+                pass
     except:
         Connect()
         with connection.cursor() as cursor:
@@ -239,7 +241,7 @@ def GetStatusNFT():
                 row = cursor.fetchall()
                 return row
             except:
-                return "Вы ещё ничего не купили"
+                pass
 
 
 def GetParam(paramStat : ParamStatus, index = None):      # Получение информации из БД о количетсве доступных НФТ для продажи
@@ -291,9 +293,12 @@ def GetParam(paramStat : ParamStatus, index = None):      # Получение �
     
     elif paramStat == ParamStatus.get_sale:
         return data_config[index]['sale']
+    
+    elif paramStat == ParamStatus.get_mainTON:
+        return data_status[0]["ton_number"]
 
     
-def NewSale(id, count_nft, score, index):
+def NewSale(id, count_nft, score, index):       # Запись в БД информации о будущей продажи
     # print("Param_Factor:", param_factor)
     try:
         with connection.cursor() as cursor:
