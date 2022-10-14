@@ -160,7 +160,9 @@ def ChekScore(message):
 @bot.callback_query_handler(func = lambda call : True)
 def ChekCapcha(call):
     # message = call.message
-    if call.data == bd.ChekCapcha(call.message.chat.id, bd.ParamCapcha.get_capcha):
+    global callback_capcha
+    capcha_id = bd.ChekCapcha(call.message.chat.id, bd.ParamCapcha.get_capcha)
+    if call.data == callback_capcha[capcha_id]:
 
         markup = types.InlineKeyboardMarkup()
         login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")

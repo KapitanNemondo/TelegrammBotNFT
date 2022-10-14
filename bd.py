@@ -339,13 +339,16 @@ def ChekCapcha(id, Param : ParamCapcha, capcha_id = None):
                     else:
                         cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
                 elif Param == ParamCapcha.get_capcha:
-                    cursor.execute(f"SELECT EXISTS(SELECT `capcha_id` FROM `desired_purchase` WHERE telegramm_id = '{id}')")
+                    # print("YES")
+                    cursor.execute(f"SELECT `capcha_id` FROM `desired_purchase` WHERE telegramm_id = '{id}'")
                     row = cursor.fetchone()
+                    # print(row['capcha_id'])
                     return row['capcha_id']
             except:
                 pass
             connection.commit()
     except:
         Connect()
-        NewSale(id, capcha_id)
+        NewSale(id, Param, capcha_id)
 #Connect()
+
