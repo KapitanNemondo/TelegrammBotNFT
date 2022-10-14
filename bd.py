@@ -4,7 +4,6 @@ import random
 import enum
 
 import ton_parser.main as ton_parser
-import config_message as cm
 from datetime import datetime
 from config import host, port, user, password, db_name, TON_NUMBER
 
