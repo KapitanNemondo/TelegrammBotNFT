@@ -49,7 +49,7 @@ def NewUserNFT(id, teg):  # Добавление нового пользоват
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`, `login`, `passwd`) VALUES ('{id}','{teg}','{''}', '{''}', '{''}')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`) VALUES ('{id}','{teg}')")
             except:
                 pass
             connection.commit()
