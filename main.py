@@ -7,7 +7,6 @@ import message as ms
 from telebot import types # для указание типов
 # import config
 import bd
-import sys
 
 
 callback_capcha = ['👥', '👾', '🐰', '🍀', '🍌']

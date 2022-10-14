@@ -1,4 +1,3 @@
-import config_message as c_m
 import bd
 
 
