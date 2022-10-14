@@ -11,7 +11,6 @@ import bd
 
 callback_capcha = ['👥', '👾', '🐰', '🍀', '🍌']
 flag_capcha = False
-capcha_id = -1
 
 bd.Connect()
 
@@ -124,7 +123,6 @@ def ChekUser(message):
     # capcha_four = types.KeyboardButton(text=callback_capcha[3])
     # capcha_five = types.KeyboardButton(text=callback_capcha[4])
 
-    global capcha_id
 
     markup = types.InlineKeyboardMarkup()
 
@@ -138,11 +136,15 @@ def ChekUser(message):
     
     markup.row_width = 2
 
-    capcha_id = callback_capcha[randint(0, 4)]
+    capcha_id = randint(0, 4)
+
+    capcha = callback_capcha[capcha_id]
+
+    bd.ChekCapcha(message.chat.id, bd.ParamCapcha.set_capcha, capcha_id)
 
     bot.send_message(message.chat.id, text="Для обеспечения безопастности, необходимо пройти проверку\n"
                                             "Для этого, найдите и выберите одинаковый изобраения\n"
-                                            f"{capcha_id}",
+                                            f"{capcha}",
                     reply_markup=markup
     )
 
@@ -157,9 +159,8 @@ def ChekScore(message):
 
 @bot.callback_query_handler(func = lambda call : True)
 def ChekCapcha(call):
-    global capcha_id
     # message = call.message
-    if call.data == capcha_id:
+    if call.data == bd.ChekCapcha(call.message.chat.id, bd.ParamCapcha.get_capcha):
 
         markup = types.InlineKeyboardMarkup()
         login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")

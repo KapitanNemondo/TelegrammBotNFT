@@ -19,6 +19,12 @@ class ParamStatus(enum.Enum):
     get_mainTON     =   4
     """получение главного тон счета"""
 
+class ParamCapcha(enum.Enum):
+    set_capcha      =   1
+    """Установка значения капчи"""
+    get_capcha      =   2
+    """Получение значения капчи"""
+
 #cur.execute("CREATE TABLE IF NOT EXISTS `test` (`ID` INT, `NFTcount` INT, `Score` INT)")
 
 def Connect():     #Подключение к базе-данных
@@ -308,7 +314,7 @@ def NewSale(id, count_nft, score, index):       # Запись в БД инфо�
                 count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
 
                 if  count_records == 0:
-                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`) VALUES ('{id}','{count_nft}','{score}', '{index}')")
+                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`, `capcha_id`) VALUES ('{id}','{count_nft}','{score}', '{index}', '{''}')")
                 else:
                     cursor.execute(f"UPDATE `desired_purchase` SET `count_nft`='{count_nft}',`score_nft`='{score}', `purch_ratio`='{index}' WHERE telegramm_id = '{id}'")
 
@@ -319,4 +325,27 @@ def NewSale(id, count_nft, score, index):       # Запись в БД инфо�
         Connect()
         NewSale(id, count_nft, score, index)
 
+def ChekCapcha(id, Param : ParamCapcha, capcha_id = None):
+    try:
+        with connection.cursor() as cursor:
+            try:
+                if Param == ParamCapcha.set_capcha:
+                    cursor.execute(f"SELECT EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')")
+                    row = cursor.fetchone()
+                    count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
+
+                    if  count_records == 0:
+                        cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`, `capcha_id`) VALUES ('{id}','{''}','{''}', '{''}', '{capcha_id}')")
+                    else:
+                        cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
+                elif Param == ParamCapcha.get_capcha:
+                    cursor.execute(f"SELECT EXISTS(SELECT `capcha_id` FROM `desired_purchase` WHERE telegramm_id = '{id}')")
+                    row = cursor.fetchone()
+                    return row['capcha_id']
+            except:
+                pass
+            connection.commit()
+    except:
+        Connect()
+        NewSale(id, capcha_id)
 #Connect()
