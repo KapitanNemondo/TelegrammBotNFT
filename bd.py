@@ -314,7 +314,7 @@ def NewSale(id, count_nft, score, index):       # Запись в БД инфо�
                 count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
 
                 if  count_records == 0:
-                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`, `capcha_id`) VALUES ('{id}','{count_nft}','{score}', '{index}', '{''}')")
+                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`) VALUES ('{id}','{count_nft}','{score}', '{index}'")
                 else:
                     cursor.execute(f"UPDATE `desired_purchase` SET `count_nft`='{count_nft}',`score_nft`='{score}', `purch_ratio`='{index}' WHERE telegramm_id = '{id}'")
 
@@ -349,8 +349,10 @@ def SetCapcha(id, capcha_id):
                 row = cursor.fetchone()
                 count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
 
+                print(count_records)
+
                 if  count_records == 0:
-                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`, `capcha_id`) VALUES ('{id}','{''}','{''}', '{''}', '{capcha_id}')")
+                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `capcha_id`) VALUES ('{id}','{capcha_id}')")
                 else:
                     cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
             
