@@ -115,7 +115,7 @@ def EditCount(index):               # Редактирование числа о
         new_sale = sale + 1
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"UPDATE `settings_shop` SET `sale` = '{new_sale}' WHERE `index` = '{index}'")
+                cursor.execute(f"UPDATE `settings_shop` SET `sale` = '{new_sale}' WHERE `id` = '{index}'")
             except:
                 pass
     except:
