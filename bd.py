@@ -325,30 +325,40 @@ def NewSale(id, count_nft, score, index):       # Запись в БД инфо�
         Connect()
         NewSale(id, count_nft, score, index)
 
-def ChekCapcha(id, Param : ParamCapcha, capcha_id = None):
+def GetCapcha(id):
     try:
         with connection.cursor() as cursor:
             try:
-                if Param == ParamCapcha.set_capcha:
-                    cursor.execute(f"SELECT EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')")
-                    row = cursor.fetchone()
-                    count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
-
-                    if  count_records == 0:
-                        cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`, `capcha_id`) VALUES ('{id}','{''}','{''}', '{''}', '{capcha_id}')")
-                    else:
-                        cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
-                elif Param == ParamCapcha.get_capcha:
-                    # print("YES")
-                    cursor.execute(f"SELECT `capcha_id` FROM `desired_purchase` WHERE telegramm_id = '{id}'")
-                    row = cursor.fetchone()
-                    # print(row['capcha_id'])
-                    return row['capcha_id']
+                # print("YES")
+                cursor.execute(f"SELECT `capcha_id` FROM `desired_purchase` WHERE telegramm_id = '{id}'")
+                row = cursor.fetchone()
+                # print(row['capcha_id'])
+                return row['capcha_id']
             except:
                 pass
             connection.commit()
     except:
         Connect()
-        NewSale(id, Param, capcha_id)
+        GetCapcha(id)
+
+def SetCapcha(id, capcha_id):
+    try:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')")
+                row = cursor.fetchone()
+                count_records = row[f"EXISTS(SELECT telegramm_id FROM `desired_purchase` WHERE telegramm_id = '{id}')"]
+
+                if  count_records == 0:
+                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `count_nft`, `score_nft`, `purch_ratio`, `capcha_id`) VALUES ('{id}','{''}','{''}', '{''}', '{capcha_id}')")
+                else:
+                    cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
+            
+            except:
+                pass
+            connection.commit()
+    except:
+        Connect()
+        SetCapcha(id, capcha_id)
 #Connect()
 

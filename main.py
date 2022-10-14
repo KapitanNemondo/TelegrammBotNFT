@@ -140,7 +140,7 @@ def ChekUser(message):
 
     capcha = callback_capcha[capcha_id]
 
-    bd.ChekCapcha(message.chat.id, bd.ParamCapcha.set_capcha, capcha_id)
+    bd.SetCapcha(message.chat.id, capcha_id)
 
     bot.send_message(message.chat.id, text="Для обеспечения безопастности, необходимо пройти проверку\n"
                                             "Для этого, найдите и выберите одинаковый изобраения\n"
@@ -161,7 +161,7 @@ def ChekScore(message):
 def ChekCapcha(call):
     # message = call.message
     global callback_capcha
-    capcha_id = bd.ChekCapcha(call.message.chat.id, bd.ParamCapcha.get_capcha)
+    capcha_id = bd.GetCapcha(call.message.chat.id)
     if call.data == callback_capcha[capcha_id]:
 
         markup = types.InlineKeyboardMarkup()
