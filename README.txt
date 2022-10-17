@@ -7,7 +7,7 @@ mysql> CREATE TABLE main_bank (current_stage BIGINT UNIQUE, count_stage BIGINT, 
 
 mysql> CREATE TABLE settings_shop (in BIGINT, purch_ratio BIGINT, avalible BIGINT, sale BIGINT, status TEXT);
 
-mysql> CREATE TABLE base_user (telegramm_id BIGINT UNIQUE, telegramm_url TEXT, ton_number TEXT);
+mysql> CREATE TABLE base_user (id_user BIGINT, telegramm_id BIGINT UNIQUE, telegramm_url TEXT, ton_number TEXT);
 
 mysql> CREATE TABLE shop_user (data TEXT,time TEXT, telegramm_id BIGINT, ton_number TEXT, nft_id INTEGER UNIQUE);
 
