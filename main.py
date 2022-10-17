@@ -234,7 +234,7 @@ def ChekCapcha(call):
         # flag = False
         # flag_text = False
         # number_score.clear()
-        ChekMenu(call.message)
+        # ChekMenu(call.message)
 
     elif call.data == "Edit score: No":
         bot.edit_message_text(chat_id=call.message.chat.id, 

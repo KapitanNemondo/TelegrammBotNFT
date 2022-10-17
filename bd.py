@@ -49,10 +49,11 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"SELECT EXISTS(SELECT `id_user` FROM `base_user`)")
-                row = cursor.fetchone()
-                id_user = row[f"EXISTS(SELECT `id_user` FROM `base_user`)"] + 1
-                print(id_user)
+                cursor.execute(f"SELECT MAX(id_user) as max FROM `base_user`")
+                
+                row = cursor.fetchall()
+                id_user = row['max']
+                id_user += 1 
                 cursor.execute(f"INSERT INTO `base_user` (`id_user`, `telegramm_id`, `telegramm_url`) VALUES ('{id_user}', '{id_tg}','{teg}')")
             except:
                 pass

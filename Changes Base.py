@@ -1,5 +1,11 @@
-from config import host, port, user, password, db_name
+
 import pymysql
+
+host = "localhost"
+port = 3307
+user = "bot"
+password = "Take_82A06"
+db_name = "NFT_Sale"
 
 #Подключение к базе-данных
 try:
