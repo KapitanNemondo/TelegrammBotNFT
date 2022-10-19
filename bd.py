@@ -120,7 +120,7 @@ def GetSale(id):                    # Получение информации о
 def EditCount(index):               # Редактирование числа оставшихся нфт
     
     try:
-        sale = GetParam(ParamStatus.get_sale, index)
+        sale = GetParam(ParamStatus.get_sale, index=index)
         # print("Sale:", sale)
         # print("Param:", index)
         new_sale = sale + 1
@@ -214,8 +214,6 @@ def GetScore(id):   # Получение количества купленных
         Connect()
         GetScore(id)
 
-
-
 def GetConfigNFT():                 # Получение настроек продаж
     try:
         with connection.cursor() as cursor:
@@ -236,6 +234,7 @@ def GetConfigNFT():                 # Получение настроек про
                 return "Вы ещё ничего не купили"
 
 def GetStatusNFT():                 # получение главных параметров продаж
+    """Получение информации из гланых настроек продаж"""
     try:
         with connection.cursor() as cursor:
             try:
@@ -254,8 +253,28 @@ def GetStatusNFT():                 # получение главных пара
             except:
                 pass
 
+def GetList(tg_id):
+    """Получения информации о пользователе белый лист"""                 
+    try:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT COUNT(*) FROM `base_whitelist` WHERE `telegramm_id`= '{tg_id}'")
+                row = cursor.fetchone()
+                return row['COUNT(*)']
+            except:
+                pass
+    except:
+        Connect()
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT COUNT(*) FROM `base_whitelist` WHERE `telegramm_id`= '{tg_id}'")
+                row = cursor.fetchone()
+                return row['COUNT(*)']
+            except:
+                pass
 
-def GetParam(paramStat : ParamStatus, index = None):      # Получение информации из БД о количетсве доступных НФТ для продажи
+
+def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Получение информации из БД о количетсве доступных НФТ для продажи
 
     data_config = GetConfigNFT()                                            # Получение данных из БД о настройках покупки
     data_status = GetStatusNFT()
@@ -279,7 +298,7 @@ def GetParam(paramStat : ParamStatus, index = None):      # Получение �
     # param_number - Количество доступных NFT
     # param_status - Статус этапов
     # param_stage - Текущий этап                                         
-    # param_cost - Цена продажи
+    # param_coast - Цена продажи
     # param_avalible - Достпуно в данный момент
     
     if paramStat == ParamStatus.get_factor:
@@ -290,9 +309,20 @@ def GetParam(paramStat : ParamStatus, index = None):      # Получение �
         return param_stage, param_factor
     
     elif paramStat == ParamStatus.get_news:
-        param["current_stage"]  = data_status[0]['current_stage']
-        param["count_stage"]    = data_status[0]['count_stage']
-        param["coast"]          = data_status[0]['prise']
+        white_list = GetList(tg_id)
+        if white_list > 0:
+
+
+            param["current_stage"]  = data_status[1]['current_stage']
+            param["count_stage"]    = data_status[1]['count_stage']
+            param["coast"]          = data_status[1]['prise']
+        
+        else:
+            param["current_stage"]  = data_status[0]['current_stage']
+            param["count_stage"]    = data_status[0]['count_stage']
+            param["coast"]          = data_status[0]['prise']
+        
+        param["coast"]
 
         for i in range(param_stage):
             param["param_factor"].append(data_config[i]['purch_ratio'])
