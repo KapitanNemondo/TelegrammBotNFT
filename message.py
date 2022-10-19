@@ -5,6 +5,9 @@ import bd
 def HellouText(tg_id):
     param = bd.GetParam(bd.ParamStatus.get_news, tg_id=tg_id)
 
+    # print(param)
+    
+
     text = "TRACE NFT Presale. Продажа x" + str(param["current_stage"]) + " Contairse \n \n"
     hellou = "Добро пожаловать в бот для пересейла первых NFT Container. \nПродажа пройдёт в " + str(param["count_stage"]) + " этапа:\n\n"
 

@@ -25,6 +25,10 @@ class ParamCapcha(enum.Enum):
     get_capcha      =   2
     """Получение значения капчи"""
 
+class ParamList(enum.Enum):
+    whitelist       =   1
+    standart        =   2
+
 #cur.execute("CREATE TABLE IF NOT EXISTS `test` (`ID` INT, `NFTcount` INT, `Score` INT)")
 
 def Connect():     #Подключение к базе-данных
@@ -233,12 +237,16 @@ def GetConfigNFT():                 # Получение настроек про
             except:
                 return "Вы ещё ничего не купили"
 
-def GetStatusNFT():                 # получение главных параметров продаж
+def GetStatusNFT(mode = ParamList.standart):                 # получение главных параметров продаж
     """Получение информации из гланых настроек продаж"""
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute("SELECT * FROM `main_bank`")
+                if mode == ParamList.standart:
+                    type = 'standart'
+                elif mode == ParamList.whitelist:
+                    type = 'white'
+                cursor.execute(f"SELECT * FROM `main_bank` WHERE `type_list` = '{type}'")
                 row = cursor.fetchall()
                 return row
             except:
@@ -247,7 +255,11 @@ def GetStatusNFT():                 # получение главных пара
         Connect()
         with connection.cursor() as cursor:
             try:
-                cursor.execute("SELECT * FROM `main_bank`")
+                if mode == ParamList.standart:
+                    type = 'standart'
+                elif mode == ParamList.whitelist:
+                    type = 'white'
+                cursor.execute(f"SELECT * FROM `main_bank` WHERE `type_list` = '{type}'")
                 row = cursor.fetchall()
                 return row
             except:
@@ -290,6 +302,8 @@ def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Пол
         "param_sale"        : [],
     }
 
+    # print(data_status)
+
     param["param_stage"] = param_stage = data_status[0]["count_stage"]
     param_factor = []
     param_avalible = []
@@ -312,17 +326,18 @@ def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Пол
         white_list = GetList(tg_id)
         if white_list > 0:
 
+            data_status = GetStatusNFT(ParamList.whitelist)
 
-            param["current_stage"]  = data_status[1]['current_stage']
-            param["count_stage"]    = data_status[1]['count_stage']
-            param["coast"]          = data_status[1]['prise']
+            param["current_stage"]  = data_status[0]['current_stage']
+            param["count_stage"]    = data_status[0]['count_stage']
+            param["coast"]          = data_status[0]['prise']
         
         else:
             param["current_stage"]  = data_status[0]['current_stage']
             param["count_stage"]    = data_status[0]['count_stage']
             param["coast"]          = data_status[0]['prise']
         
-        param["coast"]
+        # param["coast"]
 
         for i in range(param_stage):
             param["param_factor"].append(data_config[i]['purch_ratio'])
@@ -398,4 +413,3 @@ def SetCapcha(id, capcha_id):
         Connect()
         SetCapcha(id, capcha_id)
 #Connect()
-

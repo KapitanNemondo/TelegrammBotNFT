@@ -168,7 +168,7 @@ def ChekCapcha(call):
         login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
         markup.add(login)
 
-        print(call.message.chat.id)
+        # print(call.message.chat.id)
 
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
