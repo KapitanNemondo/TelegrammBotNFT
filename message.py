@@ -29,7 +29,7 @@ def HellouText(tg_id):
 
 # Вывод текста в любое другое время
 def DayNews(tg_id):
-    param = bd.GetParam(bd.ParamStatus.get_news)
+    param = bd.GetParam(bd.ParamStatus.get_news, tg_id=tg_id)
 
     text = "💎TON ELEPHANTS💎\n" + "TRACE NFT Presale. Продажа x" + str(param["current_stage"]) + " Contairse \n \n"
     hellou = "Продажа проходит в " + str(param["count_stage"]) + " этапа:\n\n"
