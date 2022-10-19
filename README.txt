@@ -9,7 +9,7 @@ mysql> CREATE TABLE settings_shop (in BIGINT, purch_ratio BIGINT, avalible BIGIN
 
 mysql> CREATE TABLE base_user (id_user BIGINT, telegramm_id BIGINT UNIQUE, telegramm_url TEXT, ton_number TEXT);
 
-mysql> CREATE TABLE shop_user (data TEXT,time TEXT, telegramm_id BIGINT, ton_number TEXT, nft_id INTEGER UNIQUE);
+mysql> CREATE TABLE shop_user (data TEXT,time TEXT, telegramm_id BIGINT, ton_number TEXT, nft_id INTEGER UNIQUE, type TEXT);
 
 mysql> CREATE TABLE desired_purchase (telegramm_id BIGINT UNIQUE, count_nft INTEGER, score_nft INTEGER, purch_ratio INTEGER, capcha_id INTEGER);
 

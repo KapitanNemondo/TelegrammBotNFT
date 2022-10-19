@@ -7,6 +7,9 @@ import ton_parser.main as ton_parser
 from datetime import datetime
 from config import host, port, user, password, db_name
 
+NFT_name = ['Common', 'Rare', 'Epic', 'Legedary', 'Exclusive']
+
+
 class ParamStatus(enum.Enum):
     get_factor      =   0           
     """получение множителей"""
@@ -191,8 +194,12 @@ def GetRandNFT(data, ton_number, id_user):  # Получение рандомн�
                 row = cursor.fetchall()
                 id_nft = (row[random.randrange(len(row))]['nft_id'])
 
+                cursor.execute(f"SELECT `type` FROM `base_nft` WHERE `nft_id`= '{id_nft}'")
+                row = cursor.fetchone()
+                type = row['type']
+
                 cursor.execute(f"UPDATE base_nft SET acsess = 'NO' WHERE nft_id= '{id_nft}'")
-                cursor.execute(f"INSERT INTO `shop_user`(`data`, `time`, `telegramm_id`, `ton_number`, `nft_id`) VALUES ('{str(data.date())}','{str(data.time())}','{id_user}','{ton_number}','{id_nft}')")
+                cursor.execute(f"INSERT INTO `shop_user`(`data`, `time`, `telegramm_id`, `ton_number`, `nft_id`, `type`) VALUES ('{str(data.date())}','{str(data.time())}','{id_user}','{ton_number}','{id_nft}', '{type}')")
                 connection.commit()
 
                 cursor.execute("SELECT nft_id FROM `base_nft`")
@@ -203,20 +210,37 @@ def GetRandNFT(data, ton_number, id_user):  # Получение рандомн�
     except:
         pass
 
-def GetScore(id):   # Получение количества купленных NFT
-
+def GetScore(id : int):   # Получение количества купленных NFT
+    global NFT_name
+    count_nft = "\n" + "{:15}{:6}".format("Тип", "Кол-во") + "\n"
     try:
-        ton_number = GetReadNumberScore(id)
+        # ton_number = GetReadNumberScore(id)
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"SELECT COUNT(*) FROM `shop_user` WHERE ton_number= '{ton_number}'")
-                row = cursor.fetchone()
-                return row['COUNT(*)']
+                
+
+                cursor.execute(f"SELECT `type` FROM `shop_user` WHERE `telegramm_id`= '{id}'")
+                row = cursor.fetchall()
+
+                for elem in NFT_name:
+                    count_nft += "{:15}{:6}".format(str(elem), str(row.count({'type': elem}))) + "\n"
+
+                return count_nft
             except:
                 return "Вы ещё ничего не купили"
     except:
         Connect()
-        GetScore(id)
+        with connection.cursor() as cursor:
+            try:
+                
+                cursor.execute(f"SELECT `type` FROM `shop_user` WHERE `telegramm_id`= '{id}'")
+                row = cursor.fetchall()
+                for elem in NFT_name:
+                    count_nft += "{:15}{:6}".format(str(elem), str(row.count({'type': elem}))) + "\n"
+
+                return count_nft
+            except:
+                return "Вы ещё ничего не купили"
 
 def GetConfigNFT():                 # Получение настроек продаж
     try:
@@ -285,7 +309,6 @@ def GetList(tg_id):
             except:
                 pass
 
-
 def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Получение информации из БД о количетсве доступных НФТ для продажи
 
     data_config = GetConfigNFT()                                            # Получение данных из БД о настройках покупки
@@ -352,7 +375,6 @@ def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Пол
     
     elif paramStat == ParamStatus.get_mainTON:
         return data_status[0]["ton_number"]
-
     
 def NewSale(id, count_nft, score, index):       # Запись в БД информации о будущей продажи
     # print("Param_Factor:", param_factor)
@@ -412,4 +434,44 @@ def SetCapcha(id, capcha_id):
     except:
         Connect()
         SetCapcha(id, capcha_id)
-#Connect()
+
+def GetAcsess(tg_id):
+    try:
+        with connection.cursor() as cursor:
+            try:
+                # print("YES")
+                cursor.execute(f"SELECT `acsess` FROM `settings_acsess`")
+                row = cursor.fetchone()
+                
+                if row['acsess'] == 'white':
+                    count = GetList(tg_id)
+
+                    if count > 0:
+                        return True
+                    else:
+                        return False
+                
+                elif row['acsess'] == 'all':
+                    return True
+            except:
+                pass
+    except:
+        Connect()
+        with connection.cursor() as cursor:
+            try:
+                # print("YES")
+                cursor.execute(f"SELECT `acsess` FROM `settings_acsess`")
+                row = cursor.fetchone()
+                
+                if row['acsess'] == 'white':
+                    count = GetList(tg_id)
+
+                    if count > 0:
+                        return True
+                    else:
+                        return False
+                
+                elif row['acsess'] == 'all':
+                    return True
+            except:
+                pass

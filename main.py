@@ -164,16 +164,23 @@ def ChekCapcha(call):
     capcha_id = bd.GetCapcha(call.message.chat.id)
     if call.data == callback_capcha[capcha_id]:
 
-        markup = types.InlineKeyboardMarkup()
-        login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
-        markup.add(login)
+        if bd.GetAcsess(call.message.chat.id):
 
-        # print(call.message.chat.id)
+            markup = types.InlineKeyboardMarkup()
+            login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
+            markup.add(login)
 
-        bot.edit_message_text(chat_id=call.message.chat.id, 
-                                message_id=call.message.id, 
-                                text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
-                                reply_markup=markup)
+            # print(call.message.chat.id)
+
+            bot.edit_message_text(chat_id=call.message.chat.id, 
+                                    message_id=call.message.id, 
+                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
+                                    reply_markup=markup)
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id, 
+                                    message_id=call.message.id, 
+                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockText(call.message.chat.id))
+                                )
 
     elif call.data == "login":
 
