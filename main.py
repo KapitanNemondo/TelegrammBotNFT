@@ -78,7 +78,7 @@ def getQ(message):
 # Меню покупки, режим 3
 def BuyNFT(message):
                 
-    param = bd.GetParam(bd.ParamStatus.get_news)
+    param = bd.GetParam(bd.ParamStatus.get_news, tg_id=message.chat.id)
 
     count = int(message.text[8:].replace('NFT', ''))
     
@@ -112,7 +112,7 @@ def BuyNFT(message):
         
 # Возврат в меню
 def BackMenu(message):
-    bot.send_message(message.chat.id, text=ms.DayNews(), reply_markup = MainMenu(message))
+    bot.send_message(message.chat.id, text=ms.DayNews(message.chat.id), reply_markup = MainMenu(message))
 
 def ChekUser(message):
     # markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -168,9 +168,11 @@ def ChekCapcha(call):
         login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
         markup.add(login)
 
+        print(call.message.chat.id)
+
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText()),
+                                text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
                                 reply_markup=markup)
 
     elif call.data == "login":
@@ -206,7 +208,7 @@ def ChekCapcha(call):
 
             markup.add(back)
                     
-            bot.send_message(call.message.chat.id, text='Выберите покупку\n\n{news}'.format(news=ms.DayNews()), reply_markup= markup)
+            bot.send_message(call.message.chat.id, text='Выберите покупку\n\n{news}'.format(news=ms.DayNews(call.message.chat.id)), reply_markup= markup)
             # BuyNFT(call.message)
                 
         else:
@@ -244,7 +246,7 @@ def ChekCapcha(call):
         
     elif call.data == "transfer_conf":
 
-        param = bd.GetParam(bd.ParamStatus.get_news)
+        param = bd.GetParam(bd.ParamStatus.get_news, tg_id=call.message.chat.id)
         count, score, index = bd.GetSale(call.message.chat.id)
 
         if param["param_sale"][index] >= param["param_avalible"][index]:

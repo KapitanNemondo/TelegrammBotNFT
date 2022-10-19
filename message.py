@@ -2,8 +2,8 @@ import bd
 
 
 # Вывод текста при первом запуске бота, при вызове команды /start
-def HellouText():
-    param = bd.GetParam(bd.ParamStatus.get_news)
+def HellouText(tg_id):
+    param = bd.GetParam(bd.ParamStatus.get_news, tg_id=tg_id)
 
     text = "TRACE NFT Presale. Продажа x" + str(param["current_stage"]) + " Contairse \n \n"
     hellou = "Добро пожаловать в бот для пересейла первых NFT Container. \nПродажа пройдёт в " + str(param["count_stage"]) + " этапа:\n\n"
@@ -20,7 +20,7 @@ def HellouText():
 
 
 # Вывод текста в любое другое время
-def DayNews():
+def DayNews(tg_id):
     param = bd.GetParam(bd.ParamStatus.get_news)
 
     text = "💎TON ELEPHANTS💎\n" + "TRACE NFT Presale. Продажа x" + str(param["current_stage"]) + " Contairse \n \n"

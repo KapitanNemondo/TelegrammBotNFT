@@ -48,4 +48,33 @@ def CreateNFT():
     
     print('Successfully')
 
-CreateNFT()
+def UodateNFT():
+    mas = [555, 333, 166, 40, 10]
+    name = ['Common', 'Rare', 'Epic', 'Legedary', 'Exclusive']
+    count = 0
+    index = 0
+
+    with connection.cursor() as cursor:
+        for i in range(4445):
+            count += 1
+
+            try:
+                # cursor.execute(f"UPDATE `base_nft` VALUES ('{i}', '{'LOCK'}', '{name[index]}')")
+                cursor.execute(f"UPDATE `base_nft` SET acsess = '{'YES'}' WHERE `nft_id` = '{i}' AND `type` = '{name[index]}'")
+                
+            except:
+                pass
+            connection.commit()
+
+            if count == mas[index]: 
+                print('[Type]', name[index])
+                index += 1
+                count = 0
+                
+
+           
+    
+    print('Successfully')
+
+#CreateNFT()
+UodateNFT()

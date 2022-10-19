@@ -3,7 +3,7 @@ mysql> use test_one;
 
 mysql> CREATE TABLE base_nft (nft_id INTEGER UNIQUE, acsess TEXT, type TEXT);
 
-mysql> CREATE TABLE main_bank (current_stage BIGINT UNIQUE, count_stage BIGINT, prise INTEGER, ton_number TEXT);
+mysql> CREATE TABLE main_bank (id INT, current_stage BIGINT, count_stage BIGINT, prise INTEGER, ton_number TEXT, type_list TEXT);
 
 mysql> CREATE TABLE settings_shop (in BIGINT, purch_ratio BIGINT, avalible BIGINT, sale BIGINT, status TEXT);
 
