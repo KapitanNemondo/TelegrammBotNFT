@@ -13,7 +13,7 @@ import bd
 callback_capcha = ['👥', '👾', '🐰', '🍀', '🍌']
 flag_capcha = False
 
-bd.Connect()
+# bd.Connect()
 
 #main variables
 TOKEN = "5628398708:AAEL5B1CuGzQ4tHTF4Y6hjXyflL2Do2fjYU"
@@ -167,7 +167,7 @@ def ChekCapcha(call):
 
         acsess = bd.GetAcsess(call.message.chat.id)
 
-        if access == bd.ParamList.whitelist:
+        if access:
 
             markup = types.InlineKeyboardMarkup()
             login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
@@ -179,16 +179,19 @@ def ChekCapcha(call):
                                     message_id=call.message.id, 
                                     text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
                                     reply_markup=markup)
-        elif acsess == bd.ParamList.close:
+            
+            # print("OK")
+
+        else:
             bot.edit_message_text(chat_id=call.message.chat.id, 
                                     message_id=call.message.id, 
                                     text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockText(call.message.chat.id))
                                 )
-        elif acsess == bd.ParamList.time_close:
-            bot.edit_message_text(chat_id=call.message.chat.id, 
-                                    message_id=call.message.id, 
-                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockTime(call.message.chat.id))
-                                )
+        # elif acsess == bd.ParamList.time_close:
+        #     bot.edit_message_text(chat_id=call.message.chat.id, 
+        #                             message_id=call.message.id, 
+        #                             text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockTime(call.message.chat.id))
+        #                         )
 
     elif call.data == "login":
 
