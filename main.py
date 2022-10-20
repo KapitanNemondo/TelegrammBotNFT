@@ -1,5 +1,6 @@
 from email import message
 from gc import callbacks
+from os import access
 from random import randint
 import re
 import telebot
@@ -164,7 +165,9 @@ def ChekCapcha(call):
     capcha_id = bd.GetCapcha(call.message.chat.id)
     if call.data == callback_capcha[capcha_id]:
 
-        if bd.GetAcsess(call.message.chat.id):
+        acsess = bd.GetAcsess(call.message.chat.id)
+
+        if access == bd.ParamList.whitelist:
 
             markup = types.InlineKeyboardMarkup()
             login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
@@ -176,10 +179,15 @@ def ChekCapcha(call):
                                     message_id=call.message.id, 
                                     text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
                                     reply_markup=markup)
-        else:
+        elif acsess == bd.ParamList.close:
             bot.edit_message_text(chat_id=call.message.chat.id, 
                                     message_id=call.message.id, 
                                     text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockText(call.message.chat.id))
+                                )
+        elif acsess == bd.ParamList.time_close:
+            bot.edit_message_text(chat_id=call.message.chat.id, 
+                                    message_id=call.message.id, 
+                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockTime(call.message.chat.id))
                                 )
 
     elif call.data == "login":

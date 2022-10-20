@@ -31,6 +31,11 @@ class ParamCapcha(enum.Enum):
 class ParamList(enum.Enum):
     whitelist       =   1
     standart        =   2
+    close           =   3
+    time_close      =   4
+
+
+
 
 #cur.execute("CREATE TABLE IF NOT EXISTS `test` (`ID` INT, `NFTcount` INT, `Score` INT)")
 
@@ -447,12 +452,15 @@ def GetAcsess(tg_id):
                     count = GetList(tg_id)
 
                     if count > 0:
-                        return True
+                        return ParamList.whitelist
                     else:
-                        return False
+                        return ParamList.close
                 
                 elif row['acsess'] == 'all':
-                    return True
+                    return ParamList.standart
+                
+                elif row['acsess'] == 'time_close':
+                    return ParamList.time_close
             except:
                 pass
     except:
