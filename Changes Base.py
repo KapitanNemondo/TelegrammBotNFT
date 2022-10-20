@@ -146,6 +146,3 @@
 # WhiteList()
 
 
-
-Transaction(participant='EQDaRuZlGxRnri5hXC9g2torL18tRNG-JPiZ2y6BQtv2GOyN', time=datetime.datetime(2022, 10, 20, 16, 24, 42), amount=0.00, transaction_type=<TransactionType.RECEIVE: 1>),
-Transaction(participant='EQALe1ZAjze9o0pgyxSHNfzqfKDmirqneLgJZnDyDAJ13SED', time=datetime.datetime(2022, 10, 20, 16, 22, 12), amount=35.0, transaction_type=<TransactionType.RECEIVE: 1>)

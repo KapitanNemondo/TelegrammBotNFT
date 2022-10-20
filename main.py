@@ -13,7 +13,7 @@ import bd
 callback_capcha = ['👥', '👾', '🐰', '🍀', '🍌']
 flag_capcha = False
 
-# bd.Connect()
+bd.Connect()
 
 #main variables
 TOKEN = "5628398708:AAEL5B1CuGzQ4tHTF4Y6hjXyflL2Do2fjYU"

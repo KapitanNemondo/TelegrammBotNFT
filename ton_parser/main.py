@@ -77,14 +77,16 @@ def GetTransaktion(MainTon, ChekTon, score):
         
         #driver.close()
 
-        print(tuple(result))
+        print(result)
 
         res = tuple(result)
 
-        if res == None:
-            return False
+        print()
 
-        return True
+        if len(res) > 0:
+            return True
+
+        return False
     except:
         return False
 
