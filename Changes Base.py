@@ -77,4 +77,31 @@ def UodateNFT():
     print('Successfully')
 
 #CreateNFT()
-UodateNFT()
+# UodateNFT()
+
+def WhiteList():
+    data = [1970844037, 1490637384, 1317486098, 772914318, 644904426, 594680329, 498745815, 324850555, 560945352, 849231212, 5499581972,
+    493115134, 1803107169, 788532940, 524615551, 1490637384, 379373462, 795813196, 1192400800, 303780222, 721134254, 743741216, 
+    1241302903, 324850555, 498745815, 594680329, 644904426, 772914318, 1317486098, 1828738497, 1210354717, 401841115, 457449444,
+    5445884860, 714370319]
+
+    # print(len(data))
+
+    data = set(data)
+    # print(len(data))
+
+    id = 1
+
+    with connection.cursor() as cursor:
+        for elem in data:
+
+            try:
+                cursor.execute(f"INSERT INTO `base_whitelist` VALUES ('{id}', '{elem}')")
+            except:
+                pass
+            connection.commit()
+
+            id += 1
+
+
+WhiteList()
