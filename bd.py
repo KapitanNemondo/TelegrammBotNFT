@@ -61,19 +61,28 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"SELECT MAX(id_user) as max FROM `base_user`")
+                # cursor.execute(f"SELECT MAX(id_user) as max FROM `base_user`")
                 
-                row = cursor.fetchall()
-                id_user = row['max']
-                id_user += 1 
-                cursor.execute(f"INSERT INTO `base_user` (`id_user`, `telegramm_id`, `telegramm_url`) VALUES ('{id_user}', '{id_tg}','{teg}')")
+                # row = cursor.fetchall()
+                # id_user = row['max']
+                # id_user += 1 
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`) VALUES ('{id_tg}','{teg}','')")
             except:
                 pass
             connection.commit()
     except:
         Connect()
-        NewUserNFT(id)
-
+        with connection.cursor() as cursor:
+            try:
+                # cursor.execute(f"SELECT MAX(id_user) as max FROM `base_user`")
+                
+                # row = cursor.fetchall()
+                # id_user = row['max']
+                # id_user += 1 
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`) VALUES ('{id_tg}','{teg}','')")
+            except:
+                pass
+            connection.commit()
 
 def ToWriteNumberScore(id, adress): # Запись номера тон счета с привязкой к id
     try:
@@ -452,15 +461,15 @@ def GetAcsess(tg_id):
                     count = GetList(tg_id)
 
                     if count > 0:
-                        return ParamList.whitelist
+                        return True
                     else:
-                        return ParamList.close
+                        return False
                 
                 elif row['acsess'] == 'all':
-                    return ParamList.standart
+                    return True
                 
-                elif row['acsess'] == 'time_close':
-                    return ParamList.time_close
+                # elif row['acsess'] == 'time_close':
+                #     return ParamList.time_close
             except:
                 pass
     except:
@@ -481,5 +490,10 @@ def GetAcsess(tg_id):
                 
                 elif row['acsess'] == 'all':
                     return True
+                
+                # elif row['acsess'] == 'time_close':
+                #     return ParamList.time_close
             except:
                 pass
+
+# Connect()
