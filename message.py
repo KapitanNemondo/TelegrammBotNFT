@@ -18,7 +18,9 @@ def HellouText(tg_id):
     nft_score = ""
 
     for i in range(param["param_stage"]):
-        nft_score += 'x' + str(param["param_factor"][i]) + ' NFT - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
+        # nft_score += 'x' + str(param["param_factor"][i]) + ' NFT - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
+        nft_score += 'x' + str(param["param_factor"][i]) + ' NFT - ' + str(param["param_status"][i]) + '\n'
+
     
     # end = "\nДля покупки достпуно: " + str(param["param_avalible"][param["current_stage"] - 1] - param["param_sale"][param["current_stage"] - 1]) + " из " + str(param["param_avalible"][param["current_stage"] - 1]) + " по цене " + str(param["coast"]) + " TON за 1 NFT"
     end = "\nЦена одной NFT составляет: " + str(param["coast"]) + " TON"
@@ -37,7 +39,8 @@ def DayNews(tg_id):
     nft_score = ""
 
     for i in range(param["param_stage"]):
-        nft_score += 'x' + str(param["param_factor"][i]) + ' NFT - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
+        # nft_score += 'x' + str(param["param_factor"][i]) + ' NFT - ' + str(param["param_avalible"][i]) + ' штук - ' + str(param["param_status"][i]) + '\n'
+        nft_score += 'x' + str(param["param_factor"][i]) + ' NFT - ' + str(param["param_status"][i]) + '\n'
     
     end = "\nЦена одной NFT составляет: " + str(param["coast"]) + " TON"
 
