@@ -20,7 +20,7 @@ def ChekTime(transaction, ChekTon, score : float()):
 
     # scanData = (transaction.date == data.day and transaction.time.hour == (data.hour - 1))
 
-    if (transaction.time.hour == (data.hour - 1) and (transaction.time.day == data.day)):
+    if (transaction.time.hour == (data.hour) and (transaction.time.day == data.day)):
         scanData = True
 
     if (transaction.participant == ChekTon):
