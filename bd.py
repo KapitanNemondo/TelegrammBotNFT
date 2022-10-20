@@ -172,7 +172,7 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
             print("[DataMinute]", data.minute)
             print("[DataNow]", now)
 
-            transaktion_flag = (ton_parser.GetTransaktion(GetParam(ParamStatus.get_mainTON), ton_number_id, data, score))
+            transaktion_flag = (ton_parser.GetTransaktion(GetParam(ParamStatus.get_mainTON), ton_number_id, score))
             # transaktion_flag = True
             if transaktion_flag:
                 break
@@ -497,3 +497,5 @@ def GetAcsess(tg_id):
                 pass
 
 # Connect()
+
+# print(ton_parser.GetTransaktion("EQCA0vWJntuL61f1-xQB2EwMorKpI448L5sh9c1kC29f8D4V", "EQALe1ZAjze9o0pgyxSHNfzqfKDmirqneLgJZnDyDAJ13SED", 35))
