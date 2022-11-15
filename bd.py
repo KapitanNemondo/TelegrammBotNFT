@@ -3,7 +3,7 @@ import pymysql
 import random
 import enum
 
-import ton_parser.main as ton_parser
+from ton_parser.parser import filter_Transaction
 from datetime import datetime
 from config import host, port, user, password, db_name
 
@@ -171,8 +171,8 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
             now = datetime.now().minute
             print("[DataMinute]", data.minute)
             print("[DataNow]", now)
-
-            transaktion_flag = (ton_parser.GetTransaktion(GetParam(ParamStatus.get_mainTON), ton_number_id, score))
+            
+            transaktion_flag = filter_Transaction(score, ton_number_id, data.minute)
             # transaktion_flag = True
             if transaktion_flag:
                 break
@@ -418,6 +418,7 @@ def GetCapcha(id):
                 # print("YES")
                 cursor.execute(f"SELECT `capcha_id` FROM `desired_purchase` WHERE telegramm_id = '{id}'")
                 row = cursor.fetchone()
+                
                 # print(row['capcha_id'])
                 return row['capcha_id']
             except:
