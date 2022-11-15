@@ -1,5 +1,6 @@
 from email import message
 from gc import callbacks
+from os import access
 from random import randint
 import re
 import telebot
@@ -11,7 +12,6 @@ import bd
 
 callback_capcha = ['👥', '👾', '🐰', '🍀', '🍌']
 flag_capcha = False
-capcha_id = -1
 
 bd.Connect()
 
@@ -79,16 +79,17 @@ def getQ(message):
 # Меню покупки, режим 3
 def BuyNFT(message):
                 
-    param = bd.GetParam(bd.ParamStatus.get_news)
+    param = bd.GetParam(bd.ParamStatus.get_news, tg_id=message.chat.id)
 
     count = int(message.text[8:].replace('NFT', ''))
     
     for index in range(param["count_stage"]):
-        if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент' and param["param_sale"][index] < param["param_avalible"][index]:
+        if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент' and (param["param_avalible"][index] - param["param_sale"][index]) > 0:
 
             score = count * param["coast"]
             bot.send_message(message.chat.id, text="Для покупки отправьте: {score} Ton\nНа счет:".format(score= score))
-            bot.send_message(message.chat.id, text=bd.TON_NUMBER)
+
+            bot.send_message(message.chat.id, text=f"`{bd.GetParam(bd.ParamStatus.get_mainTON)}`", parse_mode="Markdown")
 
             markup = types.InlineKeyboardMarkup()
             succsfull = types.InlineKeyboardButton("💎Подтвердить перевод💎", callback_data='transfer_conf')
@@ -112,7 +113,7 @@ def BuyNFT(message):
         
 # Возврат в меню
 def BackMenu(message):
-    bot.send_message(message.chat.id, text=ms.DayNews(), reply_markup = MainMenu(message))
+    bot.send_message(message.chat.id, text=ms.DayNews(message.chat.id), reply_markup = MainMenu(message))
 
 def ChekUser(message):
     # markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -123,7 +124,6 @@ def ChekUser(message):
     # capcha_four = types.KeyboardButton(text=callback_capcha[3])
     # capcha_five = types.KeyboardButton(text=callback_capcha[4])
 
-    global capcha_id
 
     markup = types.InlineKeyboardMarkup()
 
@@ -137,11 +137,15 @@ def ChekUser(message):
     
     markup.row_width = 2
 
-    capcha_id = callback_capcha[randint(0, 4)]
+    capcha_id = randint(0, 4)
+
+    capcha = callback_capcha[capcha_id]
+
+    bd.SetCapcha(message.chat.id, capcha_id)
 
     bot.send_message(message.chat.id, text="Для обеспечения безопастности, необходимо пройти проверку\n"
                                             "Для этого, найдите и выберите одинаковый изобраения\n"
-                                            f"{capcha_id}",
+                                            f"{capcha}",
                     reply_markup=markup
     )
 
@@ -156,18 +160,38 @@ def ChekScore(message):
 
 @bot.callback_query_handler(func = lambda call : True)
 def ChekCapcha(call):
-    global capcha_id
     # message = call.message
-    if call.data == capcha_id:
+    global callback_capcha
+    capcha_id = bd.GetCapcha(call.message.chat.id)
+    if call.data == callback_capcha[capcha_id]:
 
-        markup = types.InlineKeyboardMarkup()
-        login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
-        markup.add(login)
+        acsess = bd.GetAcsess(call.message.chat.id)
 
-        bot.edit_message_text(chat_id=call.message.chat.id, 
-                                message_id=call.message.id, 
-                                text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText()),
-                                reply_markup=markup)
+        if access:
+
+            markup = types.InlineKeyboardMarkup()
+            login = types.InlineKeyboardButton("💻 Зарегистрироваться", callback_data="login")
+            markup.add(login)
+
+            # print(call.message.chat.id)
+
+            bot.edit_message_text(chat_id=call.message.chat.id, 
+                                    message_id=call.message.id, 
+                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
+                                    reply_markup=markup)
+            
+            # print("OK")
+
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id, 
+                                    message_id=call.message.id, 
+                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockText(call.message.chat.id))
+                                )
+        # elif acsess == bd.ParamList.time_close:
+        #     bot.edit_message_text(chat_id=call.message.chat.id, 
+        #                             message_id=call.message.id, 
+        #                             text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockTime(call.message.chat.id))
+        #                         )
 
     elif call.data == "login":
 
@@ -202,7 +226,7 @@ def ChekCapcha(call):
 
             markup.add(back)
                     
-            bot.send_message(call.message.chat.id, text='Выберите покупку\n\n{news}'.format(news=ms.DayNews()), reply_markup= markup)
+            bot.send_message(call.message.chat.id, text='Выберите покупку\n\n{news}'.format(news=ms.DayNews(call.message.chat.id)), reply_markup= markup)
             # BuyNFT(call.message)
                 
         else:
@@ -230,7 +254,7 @@ def ChekCapcha(call):
         # flag = False
         # flag_text = False
         # number_score.clear()
-        ChekMenu(call.message)
+        # ChekMenu(call.message)
 
     elif call.data == "Edit score: No":
         bot.edit_message_text(chat_id=call.message.chat.id, 
@@ -240,7 +264,7 @@ def ChekCapcha(call):
         
     elif call.data == "transfer_conf":
 
-        param = bd.GetParam(bd.ParamStatus.get_news)
+        param = bd.GetParam(bd.ParamStatus.get_news, tg_id=call.message.chat.id)
         count, score, index = bd.GetSale(call.message.chat.id)
 
         if param["param_sale"][index] >= param["param_avalible"][index]:
