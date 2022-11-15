@@ -1,10 +1,10 @@
 from typing import Iterable
-from typers import Transaction
-from api_methods import get_transactions
-from transaction_formatter import format_transaction
+from .typers import Transaction
+from .api_methods import get_transactions
+from .transaction_formatter import format_transaction
 from time import sleep
 from datetime import datetime
-from typers import TransactionType
+from .typers import TransactionType
 
 def _protected_get_transactions(*args, **kwargs):
 	while True:

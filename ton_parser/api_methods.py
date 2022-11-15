@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from typers import Transaction, TransactionType
+from .typers import Transaction, TransactionType
 from urllib.parse import urljoin
 import requests
 import json

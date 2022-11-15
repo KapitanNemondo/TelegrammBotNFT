@@ -1,6 +1,6 @@
-from .parser import TransactionParser
+# from parser import TransactionParser
 
 
-__all__ = [
-	"TransactionParser"
-]
+# __all__ = [
+# 	"TransactionParser"
+# ]
