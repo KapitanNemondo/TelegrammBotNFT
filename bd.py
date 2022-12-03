@@ -2,10 +2,12 @@ from turtle import get_shapepoly
 import pymysql
 import random
 import enum
+import hashlib
+import uuid
 
 from ton_parser.parser import filter_Transaction
 from datetime import datetime
-from config import host, port, user, password, db_name
+from config import host, port, user, password, db_name, admin_list
 
 NFT_name = ['Common', 'Rare', 'Epic', 'Legedary', 'Exclusive']
 
@@ -55,6 +57,88 @@ def Connect():     #Подключение к базе-данных
         print("[DataBase] Connection refused...")
         print("[DataBase]", ex)
 
+def GetTelegrammURL(tg_id):
+    try:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT telegramm_url FROM `base_user` WHERE telegramm_id= '{tg_id}'")
+                row = cursor.fetchone()
+                if len(row['telegramm_url']) > 0 or row['telegramm_url'] != '':
+                    return row['telegramm_url']
+                else:
+                    return "Null"
+            except:
+                return "Null"
+    except:
+        Connect()
+        GetTelegrammURL(tg_id)
+
+def GetPlayLogin(message):
+    try:
+        with connection.cursor() as cursor:
+            print("[ID]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT EXISTS(SELECT login FROM base_user WHERE telegramm_id = '{tg_id}')")
+                row = cursor.fetchone()
+
+                print("[ROW]", row)
+
+                count_records = row[f"EXISTS(SELECT login FROM base_user WHERE telegramm_id = '{tg_id}')"]
+
+                print("[COUNT RECORDS]", count_records)
+
+                if  count_records == 1:
+
+                    tg_url = GetTelegrammURL(tg_id)
+
+                    print("[TG_URL]", tg_url)
+
+                    if tg_url != "Null":
+                        login = tg_url[1:] + "_" + str(tg_id)[-3:]
+                    else:
+                        login = "User_" + str(tg_id)
+
+                    cursor.execute(f"UPDATE base_user SET login = '{login}' WHERE telegramm_id= '{tg_id}'")
+
+                    print("[LOGIN]", login)
+                else:
+                    cursor.execute(f"SELECT login FROM base_user WHERE telegramm_id = '{tg_id}'")
+                    row = cursor.fetchone()
+                    login = row["login"]
+                
+                key = str(random.randint(0, 1000000000)) + login + "@TONELEPHANTS" + str(random.randint(0, 1000000000)) + 2 * login
+                print("[KEY]", key)
+
+                salt = uuid.uuid4().hex
+
+
+                hach = hashlib.sha256(key.encode())
+                key_hach = hach.hexdigest()
+
+                print("[KEY HACH]", key_hach)
+
+
+                cursor.execute(f"UPDATE base_user SET pass_key = '{key_hach}' WHERE telegramm_id= '{tg_id}'")
+
+                print("[BASE DATA]", "SUCCSES")
+
+                nameFile = login + ".txt"
+
+                print("[FILE]", nameFile)
+
+                # with open() as file:
+                #     file.write(key_hach)
+                
+                return login
+
+            except:
+                return "EROR"
+            connection.commit()
+    except:
+        Connect()
+        GetPlayLogin(message) 
 
 def NewUserNFT(id_tg, teg):  # Добавление нового пользователя
     

@@ -30,7 +30,18 @@ def MainMenu(message):      # Главное меню
     btn2 = types.InlineKeyboardButton("💵 Купить NFT", callback_data="buy nft")
     btn3 = types.InlineKeyboardButton("💰 Изменить номер счета", callback_data="edit number")
     btn4 = types.InlineKeyboardButton("🏦 Проверить счет", callback_data="chek score")
+
+    btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="GoPlay")
+
+    chat_id = message.chat.id
+
     markup.add(btn1, btn2, btn3, btn4)
+
+    for elem in bd.admin_list:
+        if elem == chat_id:
+            markup.add(btn5)
+
+    
 
     return markup
 
@@ -155,6 +166,12 @@ def ChekScore(message):
                         text="Номер вашего счета введён правильно?\n"
                              f"{message.text}",
                         reply_markup=getQ(message))
+
+
+def GoPlay(message):
+    login = bd.GetPlayLogin(message)
+    bot.send_message(message.chat.id, text=f"Ваш логин: {login}!")
+
 
 # Обработка команд
 
@@ -297,6 +314,15 @@ def ChekCapcha(call):
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
                                 text="Главное меню", reply_markup=MainMenu(call.message))
+
+    elif call.data == "GoPlay":
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text="Чтобы войти в игру Вам необходимо получить Ваш уникальный логин, который пришлёт наш бот\n"
+                                     "После чего Вам необходимо вставить логин в игру и дождатся когда бот пришёл код\n"
+                                     "Если Вы входите в игру не первый раз, то Вы можете воспользоватся уже ранее плученным логином,"
+                                     " если Вы забыли - можете запросить логин повторно",
+                                reply_markup=GoPlay(call.message))
     else:
         bot.send_message(call.message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BadText()))
     
