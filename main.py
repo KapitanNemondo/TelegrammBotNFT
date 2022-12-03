@@ -170,7 +170,17 @@ def ChekScore(message):
 
 def GoPlay(message):
     login = bd.GetPlayLogin(message)
-    bot.send_message(message.chat.id, text=f"Ваш логин: {login}!")
+    bot.send_message(message.chat.id, text=f"Ваш логин: `{login}`", parse_mode="Markdown")
+    
+
+    status = bd.WaitPassword(message)
+
+    if status[0] == "Enter Succses":
+        bot.send_message(message.chat.id, text=f"Ваш ключ для входа в игру:\n`{status[1]}`", parse_mode="Markdown")
+        BackMenu(message)
+    else:
+        bot.send_message(message.chat.id, text="Доступ запрещен")
+        BackMenu(message)
 
 
 # Обработка команд
@@ -317,7 +327,7 @@ def ChekCapcha(call):
 
     elif call.data == "GoPlay":
         bot.edit_message_text(chat_id=call.message.chat.id, 
-                                message_id=call.message.id, 
+                              message_id=call.message.id,
                                 text="Чтобы войти в игру Вам необходимо получить Ваш уникальный логин, который пришлёт наш бот\n"
                                      "После чего Вам необходимо вставить логин в игру и дождатся когда бот пришёл код\n"
                                      "Если Вы входите в игру не первый раз, то Вы можете воспользоватся уже ранее плученным логином,"

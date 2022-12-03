@@ -101,6 +101,7 @@ def GetPlayLogin(message):
                         login = "User_" + str(tg_id)
 
                     cursor.execute(f"UPDATE base_user SET login = '{login}' WHERE telegramm_id= '{tg_id}'")
+                    connection.commit()
 
                     print("[LOGIN]", login)
                 else:
@@ -128,17 +129,58 @@ def GetPlayLogin(message):
 
                 print("[FILE]", nameFile)
 
-                # with open() as file:
-                #     file.write(key_hach)
+                with open(f"users_key/{nameFile}", "w") as File:
+                    pass
+
+                connection.commit()
                 
                 return login
 
             except:
                 return "EROR"
-            connection.commit()
+            
     except:
         Connect()
         GetPlayLogin(message) 
+
+def WaitPassword(message):
+    try:
+        with connection.cursor() as cursor:
+            print("[ID]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT login FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+                login = row["login"]
+
+                cursor.execute(f"SELECT pass_key FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+                key = row["pass_key"]
+
+                nameFile = login + ".txt"
+
+                print("[FILE]", nameFile)
+
+                data = datetime.now()
+                now = datetime.now().minute
+
+                while (now <= data.minute + 5):
+
+                    with open(f"users_key/{nameFile}", "r") as File:
+                            dataFile = File.read()
+                            if dataFile != "":
+                                print("[KEY GET]", dataFile)
+                                if dataFile == key:
+                                    return ["Enter Succses", key]
+                                return ["Enter Close", "EROR"]
+                return ["Time is over", 0]
+            except:
+                return ["EROR", 0]
+            
+    except:
+        Connect()
+        WaitPassword(message)
 
 def NewUserNFT(id_tg, teg):  # Добавление нового пользователя
     
@@ -150,7 +192,7 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
                 # row = cursor.fetchall()
                 # id_user = row['max']
                 # id_user += 1 
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`) VALUES ('{id_tg}','{teg}','')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`, `login`, `pass_key`) VALUES ('{id_tg}','{teg}','', '', '')")
             except:
                 pass
             connection.commit()
@@ -163,7 +205,7 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
                 # row = cursor.fetchall()
                 # id_user = row['max']
                 # id_user += 1 
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`) VALUES ('{id_tg}','{teg}','')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`, `login`, `pass_key`) VALUES ('{id_tg}','{teg}','', '', '')")
             except:
                 pass
             connection.commit()
