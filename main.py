@@ -1,23 +1,30 @@
-from email import message
+
 from gc import callbacks
 from os import access
 from random import randint
 import re
 import telebot
+
 import message as ms
 from telebot import types # для указание типов
 # import config
 import bd
 
+import enum
+# import config
+import sys
+import operator
+import referal_sys
 
-callback_capcha = ['👥', '👾', '🐰', '🍀', '🍌']
-flag_capcha = False
+from config import bot, callback_capcha, flag_capcha
+
+
+
 
 bd.Connect()
 
-#main variables
-TOKEN = "5628398708:AAEL5B1CuGzQ4tHTF4Y6hjXyflL2Do2fjYU"
-bot = telebot.TeleBot(TOKEN)
+
+
 
 def DotMenu(message):
     markup = types.ReplyKeyboardRemove()
@@ -226,8 +233,8 @@ def ChekCapcha(call):
 
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text='✅ Вы успешно зарегистрировались',
-                                reply_markup= MainMenu(call.message))
+                                text='✅ Вы успешно зарегистрировались')
+        referal_sys.StartMessage(call.message)
 
     
     elif call.data == "my buy":
@@ -344,8 +351,16 @@ def ChekCapcha(call):
 # Проверка команды старт
 @bot.message_handler(commands=['start'])
 def start_handler(message):
+    id_refer = message.text[7:]
 
-    ChekUser(message)
+    if id_refer == "":
+        id_refer = 0
+    else:
+        id_refer = int(id_refer)
+    referal_sys.ChekUser(message, id_refer)
+    
+    
+
 
     
 @bot.message_handler(content_types=['text'])
