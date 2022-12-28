@@ -17,10 +17,10 @@ def Connect():     #Подключение к базе-данных
             database=db_name,
             cursorclass=pymysql.cursors.DictCursor
         )
-        #print("[DataBase] Succsfull Connect...")
+        print(f"[DataBase - {db_name}] Succsfull Connect...")
     except Exception as ex:
-        print("[DataBase] Connection refused...")
-        print("[DataBase]", ex)
+        print(f"[DataBase - {db_name}] Connection refused...")
+        print(f"[DataBase - {db_name}]", ex)
 
 
 def NewUser(id: int):
@@ -62,22 +62,22 @@ def UpdateCountRefer(id_refer, id_new):
     global connection
     try:
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT EXISTS(SELECT tg_id_ref FROM `base_user` WHERE tg_id_ref = '{id_refer}')")
+            cursor.execute(f"SELECT EXISTS(SELECT tg_id_ref FROM `base_refer` WHERE tg_id_ref = '{id_refer}')")
             row = cursor.fetchone()
-            count_records = row[f"EXISTS(SELECT tg_id_ref FROM `base_user` WHERE tg_id_ref = '{id_refer}')"]
+            count_records = row[f"EXISTS(SELECT tg_id_ref FROM `base_refer` WHERE tg_id_ref = '{id_refer}')"]
 
             if  count_records == 0:
-                cursor.execute(f"INSERT INTO `base_user` VALUES ('{id_refer}', '{id_new}')")
+                cursor.execute(f"INSERT INTO `base_refer` VALUES ('{id_refer}', '{id_new}')")
                 cursor.execute(f"UPDATE referal_user SET count_refer = '{1}' WHERE tg_id_ref = '{id_refer}'")
 
             else:
-                cursor.execute(f"SELECT COUNT(*) FROM `base_user` WHERE tg_id_user = '{id_new}'")
+                cursor.execute(f"SELECT COUNT(*) FROM `base_refer` WHERE tg_id_user = '{id_new}'")
                 row = cursor.fetchone()
 
                 if row["COUNT(*)"] >= 1:
                     pass
                 else:
-                    cursor.execute(f"INSERT INTO `base_user` VALUES ('{id_refer}', '{id_new}')")
+                    cursor.execute(f"INSERT INTO `base_refer` VALUES ('{id_refer}', '{id_new}')")
 
                     cursor.execute(f"SELECT count_refer FROM `referal_user` WHERE tg_id_ref = '{id_refer}'")
                     row = cursor.fetchone()
@@ -185,7 +185,7 @@ def GetUser():
     try:
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"SELECT tg_id_ref, tg_id_user FROM `base_user`")
+                cursor.execute(f"SELECT tg_id_ref, tg_id_user FROM `base_refer`")
                 row = cursor.fetchall()
 
                 return row
@@ -195,7 +195,7 @@ def GetUser():
         Connect()
         with connection.cursor() as cursor:
             try:
-                cursor.execute(f"SELECT tg_id_ref, tg_id_user FROM `base_user`")
+                cursor.execute(f"SELECT tg_id_ref, tg_id_user FROM `base_refer`")
                 row = cursor.fetchall()
 
                 return row
@@ -239,7 +239,7 @@ def EditStatus(id_user):
     try:
         with connection.cursor() as cursor:
             yes = "YES"
-            cursor.execute(f"UPDATE `base_user` SET status='{yes}' WHERE tg_id_user = '{id_user}'")
+            cursor.execute(f"UPDATE `base_refer` SET status='{yes}' WHERE tg_id_user = '{id_user}'")
             connection.commit()  
                   
     except:
@@ -254,7 +254,7 @@ def FindItod(id):
     global connection
     try:
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT COUNT(*) FROM `base_user` WHERE tg_id_ref = '{id}'")
+            cursor.execute(f"SELECT COUNT(*) FROM `base_refer` WHERE tg_id_ref = '{id}'")
             row = cursor.fetchone()
 
             return row["COUNT(*)"]
@@ -262,7 +262,7 @@ def FindItod(id):
     except:
         Connect()
         with connection.cursor() as cursor:
-            cursor.execute(f"SELECT COUNT(*) FROM `base_user` WHERE tg_id_ref = '{id}'")
+            cursor.execute(f"SELECT COUNT(*) FROM `base_refer` WHERE tg_id_ref = '{id}'")
             row = cursor.fetchone()
 
             return row["COUNT(*)"]
@@ -361,7 +361,7 @@ def SetCountRefer(id_refer, id_user):
 
             if count_refer > 0:
                 count_refer -= 1
-                cursor.execute(f"DELETE FROM `base_user` WHERE tg_id_user = '{id_user}'")
+                cursor.execute(f"DELETE FROM `base_refer` WHERE tg_id_user = '{id_user}'")
             else:
                  count_refer = 0
 

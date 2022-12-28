@@ -2,7 +2,7 @@ import baseReferData as baseRefer
 import enum
 import operator
 from telebot import types # для указание типов
-from config import bot, callback_capcha, flag_capcha
+from config import bot, callback_capcha, flag_capcha, show_url_sub, show_data_user
 from random import randint
 
 CHANEL_ID = -1001688299683
@@ -177,71 +177,18 @@ def chek_sub_channel(chat_member_chal, chat_member_grupp, chat_id, ref_id=None):
         else:
             bot.send_message(chat_id, text="Подпишись на наши каналы и нажми на кнопку: Обновить данные", reply_markup=_update())
 
-# ок        
-def show_url_sub():
-    """Вывод инлайн кнопки с подписками"""
-    
-    markup = types.InlineKeyboardMarkup()
-
-    markup.row_width = 2
-
-    log_inst = types.InlineKeyboardButton(text="Instagram", url='https://instagram.com/ton_elephants')
-    log_tg = types.InlineKeyboardButton(text="Telegram", url='https://t.me/ton_elephants')
-    log_chat = types.InlineKeyboardButton(text='Наш чат', url='https://t.me/+4w1S6lz5c3s2MzJi')
-
-
-    markup.add(log_inst, log_tg, log_chat)
-    return markup
-
-# ок
-def show_data_user(chat_id):
-    """
-    Получение зарегистрированной уникальной ссылки 
-    и количества пользователей, подписавшихся с ней
-    """
-    # regim = baseRefer.GetConfig()
-    markup = types.InlineKeyboardMarkup()
-
-
-    url = types.InlineKeyboardButton('Моя ссылка', callback_data="myUrl")
-    score = types.InlineKeyboardButton('Счет', callback_data="getScore")
-
-    #get_all_score = types.KeyboardButton(text='Показать счет всех участников')
-
-    get_info_all_user = types.InlineKeyboardButton('Информация об участниках', callback_data="getAllUser")
-
-    #updata_bot = types.KeyboardButton(text='Обновить бота')
-
-    policeBot = types.InlineKeyboardButton('Активировать сыщика', callback_data="search")
-
-    # getAutorization = types.KeyboardButton(text='Я не робот')
-
-    
-    
-
-    for elem in baseRefer.admin_list:
-        if elem == chat_id:
-            if elem == baseRefer.admin_list[0]:
-                markup.add(score, get_info_all_user)
-
-    markup.add(url, score)
-    
-    # elif regim == 2:
-    #     markup.add(score, getAutorization)
-    
-    return markup
 
 def StartMessage(message):
     regim = baseRefer.GetConfig()
     id_refer = baseRefer.GetIdRefer(message.chat.id)
 
-    # print(regim)
+    print("[Regim]", regim)
 
-    if True:
+    if regim == "open":
 
-        print(id_refer)
+        print("[ID Refer]", id_refer)
 
-        if id_refer == 0:
+        if id_refer == 0 or id_refer == None:
 
 
             chat_id = message.chat.id

@@ -16,7 +16,7 @@ import sys
 import operator
 import referal_sys
 
-from config import bot, callback_capcha, flag_capcha
+from config import *
 
 
 
@@ -26,31 +26,6 @@ bd.Connect()
 
 
 
-def DotMenu(message):
-    markup = types.ReplyKeyboardRemove()
-    return markup
-
-def MainMenu(message):      # Главное меню
-    markup = types.InlineKeyboardMarkup()
-
-    btn1 = types.InlineKeyboardButton("💼 Мои покупки", callback_data="my buy")
-    btn2 = types.InlineKeyboardButton("💵 Купить NFT", callback_data="buy nft")
-    btn3 = types.InlineKeyboardButton("💰 Изменить номер счета", callback_data="edit number")
-    btn4 = types.InlineKeyboardButton("🏦 Проверить счет", callback_data="chek score")
-
-    btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="GoPlay")
-
-    chat_id = message.chat.id
-
-    markup.add(btn1, btn2, btn3, btn4)
-
-    for elem in bd.admin_list:
-        if elem == chat_id:
-            markup.add(btn5)
-
-    
-
-    return markup
 
 
 # Получение номера тон счета, режим 4
@@ -133,7 +108,7 @@ def BuyNFT(message):
 def BackMenu(message):
     bot.send_message(message.chat.id, text=ms.DayNews(message.chat.id), reply_markup = MainMenu(message))
 
-def ChekUser(message):
+def ChekUser(message, id_refer):
     # markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
     # capcha_one = types.KeyboardButton(text=callback_capcha[0])
@@ -159,7 +134,9 @@ def ChekUser(message):
 
     capcha = callback_capcha[capcha_id]
 
-    bd.SetCapcha(message.chat.id, capcha_id)
+    bd.SetCapcha(message.chat.id, capcha_id, id_refer)
+
+    print("[Set Capcha]", capcha_id, capcha)
 
     bot.send_message(message.chat.id, text="Для обеспечения безопастности, необходимо пройти проверку\n"
                                             "Для этого, найдите и выберите одинаковый изобраения\n"
@@ -197,6 +174,8 @@ def ChekCapcha(call):
     # message = call.message
     global callback_capcha
     capcha_id = bd.GetCapcha(call.message.chat.id)
+    print("[Get Capcha]", capcha_id, callback_capcha[capcha_id], "\n")
+
     if call.data == callback_capcha[capcha_id]:
 
         acsess = bd.GetAcsess(call.message.chat.id)
@@ -233,7 +212,20 @@ def ChekCapcha(call):
 
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text='✅ Вы успешно зарегистрировались')
+                                text='✅ Вы успешно зарегистрировались',
+                                reply_markup=MainMenu(call.message))
+
+        
+        # referal_sys.StartMessage(call.message)
+    
+    elif call.data == "my nft":
+        
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text='Меню с функциональным доступам к нфт',
+                                reply_markup=NFT_Menu(call.message))
+    
+    elif call.data == "refer programm":
         referal_sys.StartMessage(call.message)
 
     
@@ -340,6 +332,37 @@ def ChekCapcha(call):
                                      "Если Вы входите в игру не первый раз, то Вы можете воспользоватся уже ранее плученным логином,"
                                      " если Вы забыли - можете запросить логин повторно",
                                 reply_markup=GoPlay(call.message))
+
+    elif call.data == "updateDate":
+        refer_id = referal_sys.baseRefer.GetIdRefer(call.message.chat.id)
+        if refer_id != None:
+            referal_sys.chek_sub_channel(bot.get_chat_member(chat_id=referal_sys.CHANEL_ID, user_id=call.message.chat.id),
+                        bot.get_chat_member(chat_id=referal_sys.GRUPP_ID, user_id=call.message.chat.id),
+                        call.message.chat.id, ref_id=refer_id
+                        )
+        else:
+            referal_sys.chek_sub_channel(bot.get_chat_member(chat_id=referal_sys.CHANEL_ID, user_id=call.message.chat.id),
+                        bot.get_chat_member(chat_id=referal_sys.GRUPP_ID, user_id=call.message.chat.id),
+                        call.message.chat.id, ref_id=refer_id
+                        )
+        
+    elif call.data == "getReferUrl":
+        referal_sys.baseRefer.NewUser(call.message.chat.id)
+        bot.send_message(call.message.chat.id,
+                        text="Вы успешно зарегистрировались, "
+                            "ваша уникальная ссылка:\n`{url}`".format(url=referal_sys.main_url + str(call.message.chat.id)),
+                        reply_markup=show_data_user(call.message.chat.id), parse_mode="MarkDown"
+                        )
+
+    elif call.data == "getScore":
+        bot.send_message(call.message.chat.id, text="Ваш счет: {count}".format(count=referal_sys.baseRefer.GetScore(call.message.chat.id)))
+    
+    elif call.data == "myUrl":
+        bot.send_message(call.message.chat.id,
+                            text="Ваша уникальная ссылка:\n`{url}`".format(url=referal_sys.main_url + str(call.message.chat.id)),
+                            parse_mode="MarkDown"
+                        )
+    
     else:
         bot.send_message(call.message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BadText()))
     
@@ -357,7 +380,7 @@ def start_handler(message):
         id_refer = 0
     else:
         id_refer = int(id_refer)
-    referal_sys.ChekUser(message, id_refer)
+    ChekUser(message, id_refer)
     
     
 

@@ -52,10 +52,10 @@ def Connect():     #Подключение к базе-данных
             database=db_name,
             cursorclass=pymysql.cursors.DictCursor
         )
-        print("[DataBase] Succsfull Connect...")
+        print(f"[DataBase - {db_name}] Succsfull Connect...")
     except Exception as ex:
-        print("[DataBase] Connection refused...")
-        print("[DataBase]", ex)
+        print(f"[DataBase - {db_name}] Connection refused...")
+        print(f"[DataBase - {db_name}]", ex)
 
 def GetTelegrammURL(tg_id):
     try:
@@ -554,7 +554,7 @@ def GetCapcha(id):
         Connect()
         GetCapcha(id)
 
-def SetCapcha(id, capcha_id):
+def SetCapcha(id, capcha_id, id_refer):
     try:
         with connection.cursor() as cursor:
             try:
@@ -565,7 +565,7 @@ def SetCapcha(id, capcha_id):
                 # print(count_records)
 
                 if  count_records == 0:
-                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `capcha_id`) VALUES ('{id}','{capcha_id}')")
+                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `capcha_id`,`refer_id`) VALUES ('{id}','{capcha_id}', '{id_refer}')")
                 else:
                     cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
             
@@ -574,7 +574,7 @@ def SetCapcha(id, capcha_id):
             connection.commit()
     except:
         Connect()
-        SetCapcha(id, capcha_id)
+        SetCapcha(id, capcha_id, id_refer)
 
 def GetAcsess(tg_id):
     try:
