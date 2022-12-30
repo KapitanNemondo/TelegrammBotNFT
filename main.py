@@ -198,7 +198,7 @@ def ChekCapcha(call):
         else:
             bot.edit_message_text(chat_id=call.message.chat.id, 
                                     message_id=call.message.id, 
-                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockText(call.message.chat.id))
+                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.DayNews(call.message.chat.id))
                                 )
         # elif acsess == bd.ParamList.time_close:
         #     bot.edit_message_text(chat_id=call.message.chat.id, 
@@ -212,8 +212,11 @@ def ChekCapcha(call):
 
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text='✅ Вы успешно зарегистрировались',
-                                reply_markup=MainMenu(call.message))
+                                text='✅ Вы успешно зарегистрировались')
+
+        bot.send_message(chat_id=call.message.chat.id, 
+                         text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockText(call.message.chat.id)),
+                         reply_markup=MainMenu(call.message))
 
         
         # referal_sys.StartMessage(call.message)
