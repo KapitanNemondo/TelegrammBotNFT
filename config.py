@@ -61,14 +61,16 @@ def show_url_sub():
     
     markup = types.InlineKeyboardMarkup()
 
-    markup.row_width = 2
+    markup.row_width = 3
 
-    log_inst = types.InlineKeyboardButton(text="Instagram", url='https://instagram.com/ton_elephants')
-    log_tg = types.InlineKeyboardButton(text="Telegram", url='https://t.me/ton_elephants')
-    log_chat = types.InlineKeyboardButton(text='Наш чат', url='https://t.me/+4w1S6lz5c3s2MzJi')
+    log_inst = types.InlineKeyboardButton(text="📱 Instagram", url='https://instagram.com/ton_elephants')
+    log_tg = types.InlineKeyboardButton(text="✈ Telegram", url='https://t.me/ton_elephants')
+    log_chat = types.InlineKeyboardButton(text='🗣 Наш чат', url='https://t.me/+4w1S6lz5c3s2MzJi')
+
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="Back")
 
 
-    markup.add(log_inst, log_tg, log_chat)
+    markup.add(log_inst, log_tg, log_chat, back_Menu)
     return markup
 
 def NFT_Menu(message):      # Главное меню
@@ -102,13 +104,17 @@ def show_data_user(chat_id):
     # regim = baseRefer.GetConfig()
     markup = types.InlineKeyboardMarkup()
 
+    markup.row_width = 2
 
-    url = types.InlineKeyboardButton('Моя ссылка', callback_data="myUrl")
-    score = types.InlineKeyboardButton('Счет', callback_data="getScore")
+    url = types.InlineKeyboardButton('🔗 Моя ссылка', callback_data="myUrl")
+    score = types.InlineKeyboardButton('🧮 Счет', callback_data="getScore")
+
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="Back")
+
 
     #get_all_score = types.KeyboardButton(text='Показать счет всех участников')
 
-    get_info_all_user = types.InlineKeyboardButton('Информация об участниках', callback_data="getAllUser")
+    get_info_all_user = types.InlineKeyboardButton('📝 Информация об участниках', callback_data="getAllUser")
 
     #updata_bot = types.KeyboardButton(text='Обновить бота')
 
@@ -122,9 +128,9 @@ def show_data_user(chat_id):
     for elem in admin_list:
         if elem == chat_id:
             if elem == admin_list[0]:
-                markup.add(score, get_info_all_user)
+                markup.add(get_info_all_user)
 
-    markup.add(url, score)
+    markup.add(url, score, back_Menu)
     
     # elif regim == 2:
     #     markup.add(score, getAutorization)
