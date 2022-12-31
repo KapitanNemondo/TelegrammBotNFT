@@ -18,7 +18,7 @@ admin_list = [849231212, 485563456, 675564806, 493115134, 560945352]
 # TON_NUMBER = "EQCA0vWJntuL61f1-xQB2EwMorKpI448L5sh9c1kC29f8D4V"
 
 #main variables
-TOKEN = "5590720904:AAHZe3EuakfrLjFI-3kChcaYdLjyh8I2Wss"
+TOKEN = "5665892960:AAH2FgPw_bMqirFEqBlXe8CePTm7mv0f_KQ"
 bot = telebot.TeleBot(TOKEN)
 
 callback_capcha = ['👥', '👾', '🐰', '🍀', '🍌']
