@@ -50,14 +50,18 @@
 #         Connect()
 #         GetScore(id)
 
-nameFile = "Elovskij_212.txt"
+# nameFile = "Elovskij_212.txt"
 
-# myfile = open(f"users_key/{nameFile}", "w")
-# myfile.close()
-flag = True
-while flag:
-    with open(f"users_key/{nameFile}", "r") as File:
-                            dataFile = File.read()
-                            print(dataFile)
-                            if dataFile != "":
-                                flag = False
+# # myfile = open(f"users_key/{nameFile}", "w")
+# # myfile.close()
+# flag = True
+# while flag:
+#     with open(f"users_key/{nameFile}", "r") as File:
+#                             dataFile = File.read()
+#                             print(dataFile)
+#                             if dataFile != "":
+#                                 flag = False
+
+from ton_parser.parser import filter_Transaction
+
+print(filter_Transaction(1, "EQBjMyZmqSE0PXI33KqJqLCUWCXP3tWT5WrwDpg5MLWHPMLp", 10))

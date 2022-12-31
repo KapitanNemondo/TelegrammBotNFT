@@ -45,8 +45,10 @@ def getUserAdressNFT(message):
     #                                  "нажми Да, если нет, то Нет", reply_markup = markup)
     mesg = bot.edit_message_text(chat_id=message.chat.id, 
                                 message_id=message.id, 
-                                text="Введите номер вашего счета, если он совпадает с выведенными номером, "
-                                     "нажми Да, если нет, то Нет",
+                                text="""
+Введите номер вашего TON-кошелька💎
+Если он совпадает с выведенным номером, то нажмите «✅ Да», если не совпадает, то нажмите «❌ Нет»
+                                """,
                                 reply_markup = markup)
     return mesg
 
@@ -70,39 +72,49 @@ def getQ(message):
 
 
 # Меню покупки, режим 3
-def BuyNFT(message):
+def BuyNFT(message, count):
                 
-    param = bd.GetParam(bd.ParamStatus.get_news, tg_id=message.chat.id)
+    # param = bd.GetParam(bd.ParamStatus.get_news, tg_id=message.chat.id)
 
-    count = int(message.text[8:].replace('NFT', ''))
+    # count = int(message.text[8:].replace('NFT', ''))
     
-    for index in range(param["count_stage"]):
-        if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент' and (param["param_avalible"][index] - param["param_sale"][index]) > 0:
+    # for index in range(param["count_stage"]):
+    #     if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент' and (param["param_avalible"][index] - param["param_sale"][index]) > 0:
 
-            score = count * param["coast"]
-            bot.send_message(message.chat.id, text="Для покупки отправьте: {score} Ton\nНа счет:".format(score= score))
+    if count == 1:
+        score = 1
 
-            bot.send_message(message.chat.id, text=f"`{bd.GetParam(bd.ParamStatus.get_mainTON)}`", parse_mode="Markdown")
+    elif count == 3:
+        score = 55
 
-            markup = types.InlineKeyboardMarkup()
-            succsfull = types.InlineKeyboardButton("💎Подтвердить перевод💎", callback_data='transfer_conf')
-            back = types.InlineKeyboardButton("⬅️ Назад", callback_data='Back')
+    elif count == 5:
+        score = 75
 
-            markup.add(succsfull, back)
+    elif count == 10:
+        score = 140
+    
+    bot.send_message(message.chat.id, text="Для покупки отправьте: {score} Ton\nНа счет:".format(score= score))
 
-            flag_stage = False
+    bot.send_message(message.chat.id, text=f"`{bd.GetParam(bd.ParamStatus.get_mainTON)}`", parse_mode="Markdown")
 
-            bot.send_message(message.chat.id, text="После перевода подтвердите перевод", reply_markup=markup)
+    markup = types.InlineKeyboardMarkup()
+    succsfull = types.InlineKeyboardButton("💎Подтвердить перевод💎", callback_data='transfer_conf')
+    back = types.InlineKeyboardButton("⬅️ Назад", callback_data='Back')
 
-            bd.NewSale(message.chat.id, count, score, index)
+    markup.add(succsfull, back)
 
-            break
+
+    bot.send_message(message.chat.id, text="После перевода подтвердите перевод", reply_markup=markup)
+
+    bd.NewSale(message.chat.id, count, score)
+
+    #         break
                     
-        else:
-            flag_stage = True
+    #     else:
+    #         flag_stage = True
 
-    if flag_stage:   
-        bot.send_message(message.chat.id, text='🔐Этап ещё не наступил🔐')
+    # if flag_stage:   
+    #     bot.send_message(message.chat.id, text='🔐Этап ещё не наступил🔐')
         
 # Возврат в меню
 def BackMenu(message):
@@ -188,10 +200,17 @@ def ChekCapcha(call):
 
             # print(call.message.chat.id)
 
-            bot.edit_message_text(chat_id=call.message.chat.id, 
-                                    message_id=call.message.id, 
-                                    text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
-                                    reply_markup=markup)
+            bot.send_photo(chat_id=call.message.chat.id,
+                           photo=open("photo\ded_moroz.jpg", "rb"),
+                           caption="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
+                           reply_markup=markup)
+
+            # bot.edit_message_text(chat_id=call.message.chat.id, 
+            #                         message_id=call.message.id, 
+            #                         text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
+            #                         reply_markup=markup)
+
+            
             
             # print("OK")
 
@@ -210,13 +229,19 @@ def ChekCapcha(call):
 
         bd.NewUserNFT(call.message.chat.id, f"@{call.message.chat.username}")
 
-        bot.edit_message_text(chat_id=call.message.chat.id, 
+        # bot.edit_message_text(chat_id=call.message.chat.id, 
+        #                         message_id=call.message.id, 
+        #                         text='✅ Вы успешно зарегистрировались')
+
+        bot.edit_message_caption(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text='✅ Вы успешно зарегистрировались')
+                                caption='✅ Вы успешно зарегистрировались')
 
         bot.send_message(chat_id=call.message.chat.id, 
                          text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BlockText(call.message.chat.id)),
                          reply_markup=MainMenu(call.message))
+        
+        
 
         
         # referal_sys.StartMessage(call.message)
@@ -225,7 +250,7 @@ def ChekCapcha(call):
         
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text='Меню с функциональным доступам к нфт',
+                                text='Возможные операции с NFT💎',
                                 reply_markup=NFT_Menu(call.message))
     
     elif call.data == "refer programm":
@@ -237,23 +262,28 @@ def ChekCapcha(call):
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
                                 text='Ваши покупки \nNFT: {count}'.format(count=bd.GetScore(call.message.chat.id)),
-                                reply_markup=MainMenu(call.message))
+                                reply_markup=NFT_Menu(call.message))
 
     elif call.data == "buy nft":
         if bd.ChekNumberScore(call.message.chat.id):
 
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            markup = types.InlineKeyboardMarkup()
 
             param_stage, param_factor = bd.GetParam(bd.ParamStatus.get_factor)
 
-            btn = []
-            for i in range(param_stage):
-                btn.append(types.KeyboardButton("Купить x{factor} NFT".format(factor=param_factor[i])))
-                markup.add(btn[i])
-                    
-            back = types.KeyboardButton("⬅️ Назад")
+            # btn = []
+            # for i in range(param_stage):
+            #     btn.append(types.KeyboardButton("Купить x{factor} NFT".format(factor=param_factor[i])))
+            #     markup.add(btn[i])
 
-            markup.add(back)
+            buy_x1 = types.InlineKeyboardButton("Купить х1 NFT", callback_data="buy x1")
+            buy_x3 = types.InlineKeyboardButton("Купить х3 NFT", callback_data="buy x3")
+            buy_x5 = types.InlineKeyboardButton("Купить х5 NFT", callback_data="buy x5")
+            buy_x10 = types.InlineKeyboardButton("Купить х10 NFT", callback_data="buy x10")
+                    
+            back = types.InlineKeyboardButton("⬅️ Назад", callback_data="Back")
+
+            markup.add(buy_x1, buy_x3, buy_x5, buy_x10, back)
                     
             bot.send_message(call.message.chat.id, text='Выберите покупку\n\n{news}'.format(news=ms.DayNews(call.message.chat.id)), reply_markup= markup)
             # BuyNFT(call.message)
@@ -270,8 +300,8 @@ def ChekCapcha(call):
     elif call.data == "chek score":
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text='Привязанный счет: {score}'.format(score=bd.GetReadNumberScore(call.message.chat.id)),
-                                reply_markup=MainMenu(call.message))
+                                text='Привязанный счёт 💳:\n `{score}`'.format(score=bd.GetReadNumberScore(call.message.chat.id)),
+                                reply_markup=NFT_Menu(call.message), parse_mode="MarkDown")
     
     elif call.data == "Edit score: YES":
         index = call.message.text.find("\n") + 1
@@ -279,7 +309,7 @@ def ChekCapcha(call):
         bd.ToWriteNumberScore(call.message.chat.id, call.message.text[index:])
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text="Номер счета успешно изменён", reply_markup=MainMenu(call.message))
+                                text="Номер счета успешно изменён", reply_markup=NFT_Menu(call.message))
         # flag = False
         # flag_text = False
         # number_score.clear()
@@ -296,33 +326,54 @@ def ChekCapcha(call):
         param = bd.GetParam(bd.ParamStatus.get_news, tg_id=call.message.chat.id)
         count, score, index = bd.GetSale(call.message.chat.id)
 
-        if param["param_sale"][index] >= param["param_avalible"][index]:
+        # if param["param_sale"][index] >= param["param_avalible"][index]:
+        #     bot.edit_message_text(chat_id=call.message.chat.id, 
+        #                         message_id=call.message.id, 
+        #                         text='❌Все распродано, этап завершён❌', reply_markup=MainMenu(call.message))
+
+        markup = types.InlineKeyboardMarkup()
+       
+        Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+
+
+        # number_score.append(message.text)
+
+        markup.add(Back)
+        
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text='Проверка наличия транзакции\n Время подтверждения может занимать от одной до трёх минут',
+                                reply_markup=markup)
+
+        flag = bd.ToWriteBdNFT(call.message.chat.id)
+        
+
+        if flag:
+
+            text = """Поздравляем! 
+
+Вы купили {count} NFT Ton Elephants🐘
+
+При покупке на Новогоднем Pre-Sale вы получаете эксклюзивную одежду в виде зимнего свитера🥳
+
+Носите на здоровье😉
+Команда Ton Elephants🐘""".format(count = count)
+
+            bot.send_photo(chat_id=call.message.chat.id,
+                           photo=open("photo\switer.jpg", "rb"),
+                           caption=text,
+                           reply_markup=NFT_Menu(call.message))
+        else:
             bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
-                                text='❌Все распродано, этап завершён❌', reply_markup=MainMenu(call.message))
-        
-        else:
-
-            flag = bd.ToWriteBdNFT(call.message.chat.id)
-            
-
-            if flag:
-
-                markup = types.InlineKeyboardMarkup()
-                btn2 = types.InlineKeyboardButton("💵 Купить NFT", callback_data="buy nft")
-                back = types.InlineKeyboardButton("⬅️ Назад", callback_data='Back')
-
-                markup.add(btn2, back)
-
-                bot.edit_message_text(chat_id=call.message.chat.id, 
-                                    message_id=call.message.id, 
-                                    text='Вы успешно купили {count} слонов'.format(count=count), reply_markup=markup)
-            else:
-                bot.edit_message_text(chat_id=call.message.chat.id, 
-                                    message_id=call.message.id, 
-                                    text='❌Ошибка транзакции❌', reply_markup=MainMenu(call.message))
+                                text='❌Ошибка транзакции❌', reply_markup=NFT_Menu(call.message))
         
     elif call.data == "Back":
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text="Главное меню", reply_markup=NFT_Menu(call.message))
+    
+    elif call.data == "BackToMain":
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
                                 text="Главное меню", reply_markup=MainMenu(call.message))
@@ -352,8 +403,8 @@ def ChekCapcha(call):
     elif call.data == "getReferUrl":
         referal_sys.baseRefer.NewUser(call.message.chat.id)
         bot.send_message(call.message.chat.id,
-                        text="Вы успешно зарегистрировались, "
-                            "ваша уникальная ссылка:\n`{url}`".format(url=referal_sys.main_url + str(call.message.chat.id)),
+                        text="Ваша уникальная ссылка:"
+                            "\n`{url}`".format(url=referal_sys.main_url + str(call.message.chat.id)),
                         reply_markup=show_data_user(call.message.chat.id), parse_mode="MarkDown"
                         )
 
@@ -365,6 +416,36 @@ def ChekCapcha(call):
                             text="Ваша уникальная ссылка:\n`{url}`".format(url=referal_sys.main_url + str(call.message.chat.id)),
                             parse_mode="MarkDown"
                         )
+    
+    elif call.data == "GetInfoRefer":
+
+        markup = types.InlineKeyboardMarkup()
+        back_Refer = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="refer programm")
+
+
+        markup.add(back_Refer)
+        text = """Вы заинтересовались реферальной программой? Давайте мы вам всё расскажем👌🏻
+В чём смысл реферальной программы?
+Всё очень просто. Вы приглашаете как можно больше людей и получаете награды в игре, а так же автоматически участвуете в частых розыгрышах только для участников реферальной программы Ton Elephants🐘💎
+
+Следите за новостями, 
+Команда Ton Elephants🐘💎"""
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text=text,
+                                reply_markup=markup)
+
+    elif call.data == "buy x1":
+        BuyNFT(call.message, 1)
+    
+    elif call.data == "buy x3":
+        BuyNFT(call.message, 3)
+
+    elif call.data == "buy x5":
+        BuyNFT(call.message, 5)
+
+    elif call.data == "buy x10":
+        BuyNFT(call.message, 10)
     
     else:
         bot.send_message(call.message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BadText()))
@@ -389,18 +470,18 @@ def start_handler(message):
 
 
     
-@bot.message_handler(content_types=['text'])
-def boot_message(message):
+# @bot.message_handler(content_types=['text'])
+# def boot_message(message):
     
-    if message.chat.type == 'private':
+#     if message.chat.type == 'private':
         
-        if message.text == '⬅️ Назад':
-            bot.send_message(message.chat.id, text="Отмена операции", reply_markup=DotMenu(message))
-            bot.send_message(message.chat.id, text="Главное меню", reply_markup=MainMenu(message))
+#         if message.text == '⬅️ Назад':
+#             bot.send_message(message.chat.id, text="Отмена операции", reply_markup=DotMenu(message))
+#             bot.send_message(message.chat.id, text="Главное меню", reply_markup=NFT_Menu(message))
 
         
-        elif message.text[:8] == 'Купить x':
-            BuyNFT(message)
+#         elif message.text[:8] == 'Купить x':
+#             BuyNFT(message)
 
     
  

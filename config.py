@@ -56,6 +56,32 @@ def MainMenu(message):
 
     return markup
 
+def new_refer_menu(chat_id, url):
+    """Новое меню рефералов"""
+    markup = types.InlineKeyboardMarkup()
+
+    markup.row_width = 3
+
+    get_info = types.InlineKeyboardButton(text="ℹ️ Информация", callback_data="GetInfoRefer")
+    #url = types.InlineKeyboardButton('🔗 Моя ссылка', callback_data="myUrl")
+    score = types.InlineKeyboardButton('🧮 Счет', callback_data="getScore")
+
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="BackToMain")
+
+    get_info_all_user = types.InlineKeyboardButton('📝 Информация об участниках', callback_data="getAllUser")
+
+
+    markup.add(get_info, url, score, back_Menu)
+
+    for elem in admin_list:
+        if elem == chat_id:
+            if elem == admin_list[0]:
+                markup.add(get_info_all_user)
+
+
+    return markup
+
+
 def show_url_sub():
     """Вывод инлайн кнопки с подписками"""
     
@@ -69,8 +95,14 @@ def show_url_sub():
 
     back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="Back")
 
+    
+
 
     markup.add(log_inst, log_tg, log_chat, back_Menu)
+
+    
+
+
     return markup
 
 def NFT_Menu(message):      # Главное меню
@@ -81,11 +113,13 @@ def NFT_Menu(message):      # Главное меню
     btn3 = types.InlineKeyboardButton("💰 Изменить номер счета", callback_data="edit number")
     btn4 = types.InlineKeyboardButton("🏦 Проверить счет", callback_data="chek score")
 
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="BackToMain")
+
     btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="GoPlay")
 
     chat_id = message.chat.id
 
-    markup.add(btn1, btn2, btn3, btn4)
+    markup.add(btn1, btn2, btn3, btn4, back_Menu)
 
     for elem in admin_list:
         if elem == chat_id:
@@ -109,7 +143,7 @@ def show_data_user(chat_id):
     url = types.InlineKeyboardButton('🔗 Моя ссылка', callback_data="myUrl")
     score = types.InlineKeyboardButton('🧮 Счет', callback_data="getScore")
 
-    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="Back")
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="BackToMain")
 
 
     #get_all_score = types.KeyboardButton(text='Показать счет всех участников')

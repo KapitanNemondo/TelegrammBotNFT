@@ -2,7 +2,7 @@ import baseReferData as baseRefer
 import enum
 import operator
 from telebot import types # для указание типов
-from config import bot, callback_capcha, flag_capcha, show_url_sub, show_data_user
+from config import bot, callback_capcha, flag_capcha, show_url_sub, show_data_user, new_refer_menu
 from random import randint
 
 CHANEL_ID = -1001688299683
@@ -130,7 +130,7 @@ def _update():
     return markup
 
 # ок
-def chek_sub_channel(chat_member_chal, chat_member_grupp, chat_id, ref_id=None):
+def chek_sub_channel(chat_member_chal, chat_member_grupp, chat_id, message, ref_id=None):
 
     """
     Провекра подписки на телеграмм канал
@@ -144,38 +144,33 @@ def chek_sub_channel(chat_member_chal, chat_member_grupp, chat_id, ref_id=None):
         if chat_member_chal.status != 'left' and chat_member_grupp.status != 'left':
             # print("[Chek Sub Chanel] succesfull")
             baseRefer.UpdateCountRefer(ref_id, chat_id)
-            markup = types.InlineKeyboardMarkup()
 
-            getReferUrl = types.InlineKeyboardButton("Получить реферальную ссылку", callback_data="getReferUrl")
+            getReferUrl = types.InlineKeyboardButton("🔗 Моя ссылка", callback_data="getReferUrl")
 
-            markup.add(getReferUrl)
-            bot.send_message(chat_id, text="Вы подписались на наши каналы, теперь вы можете принять участие "
-                                            "в розыгрыше NFT, для участия в розыгрыше нажмите кнопку зарегистрироваться "
-                                            "после чего вы получите вашу уникальную ссылку, которую вы сможете "
-                                            "переслать другим пользователям. За каждого нового пользователя, который перейдёт "
-                                            "по ссылке и подпишется на наши каналы Вы получаете очки, чем больше очков, "
-                                            "тем выше шансов забрать ценные призы",
-                            reply_markup=markup)
+            return getReferUrl
+
         else:
-            bot.send_message(chat_id, text="Подпишись на наши каналы и нажми на кнопку: Обновить данные", reply_markup=_update())
+            bot.edit_message_text(chat_id=message.chat.id, 
+                                  message_id=message.id, 
+                                  text="Подпишись на наши каналы и нажми на кнопку: Обновить данные", reply_markup=_update())
+            return None
     else:
         if chat_member_chal.status != 'left' and chat_member_grupp.status != 'left':
             # print("[Chek Sub Chanel] succesfull")
 
             markup = types.InlineKeyboardMarkup()
 
-            getReferUrl = types.InlineKeyboardButton("Получить реферальную ссылку", callback_data="getReferUrl")
+            
+            getReferUrl = types.InlineKeyboardButton("🔗 Моя ссылка", callback_data="getReferUrl")
 
-            markup.add(getReferUrl)
-            bot.send_message(chat_id, text="Вы подписались на наши каналы, теперь вы можете принять участие "
-                                            "в розыгрыше NFT, для участия в розыгрыше нажмите кнопку зарегистрироваться "
-                                            "после чего вы получите вашу уникальную ссылку, которую вы сможете "
-                                            "переслать другим пользователям. За каждого нового пользователя, который перейдёт "
-                                            "по ссылке и подпишется на наши каналы Вы получаете очки, чем больше очков, "
-                                            "тем выше шансов забрать ценные призы",
-                            reply_markup=markup)
+            return getReferUrl
+        
         else:
-            bot.send_message(chat_id, text="Подпишись на наши каналы и нажми на кнопку: Обновить данные", reply_markup=_update())
+            bot.edit_message_text(chat_id=message.chat.id, 
+                                  message_id=message.id, 
+                                  text="Подпишись на наши каналы и нажми на кнопку: Обновить данные", reply_markup=_update())
+            
+            return None
 
 
 def StartMessage(message):
@@ -194,63 +189,47 @@ def StartMessage(message):
             chat_id = message.chat.id
             user = message.chat.first_name
 
-            bot.send_message(message.chat.id, text="Добро пожаловать!✌🏻\n"
-                                                "Это бот долгожданного первого розыгрыша от команды TON ELEPHANT’S💎🐘\n"
-                                                    "Мы проводим розыгрыш NFT\n\n"
-                                                    "Мы не могли не заметить, что Вы, возможно, сами нас нашли, поэтому "
-                                                    "наша команда предлагат Вам принять участие в розыгрыше. "
-                                                    "Для этого Вы должны подписатся на все наши каналы. "
-                                                    "За это Вы получите уникальную ссылку. "
-                                                    "Эту реферальную ссылку Вы сможете прислать своим знакомым. "
-                                                    "За каждого нового пользователя мы начислим очки. "
-                                                    "Всё просто, чем больше очков, тем выше шансы на победу. 🏅"
-                                                    "Если Вы уже подписаны на наши каналы, то просто нажмите"
-                                                    "`Получить реферальную ссылку`",
-                                                    reply_markup=show_url_sub())
+            url = chek_sub_channel(bot.get_chat_member(chat_id=CHANEL_ID, user_id=message.chat.id),
+                            bot.get_chat_member(chat_id=GRUPP_ID, user_id=message.chat.id),
+                            message=message,
+                            chat_id=message.chat.id
+                            )
+
+            if url != None:
+                bot.edit_message_text(chat_id=message.chat.id, 
+                                    message_id=message.id,
+                                    text="Реферальная программа💎",
+                                    reply_markup=new_refer_menu(message.chat.id, url))
+            else:
+                pass
             
             
 
-            chek_sub_channel(bot.get_chat_member(chat_id=CHANEL_ID, user_id=message.chat.id),
-                            bot.get_chat_member(chat_id=GRUPP_ID, user_id=message.chat.id),
-                            message.chat.id
-                            )
+            
 
         else:
 
-            bot.send_message(message.chat.id, text="Добро пожаловать!✌🏻\n"
-                                                "Это бот долгожданного первого розыгрыша от команды TON ELEPHANT’S💎🐘\n"
-                                                    "Мы проводим розыгрыш NFT\n\n"
-                                                    "Наша команда предлагат Вам принять участие в розыгрыше. "
-                                                    "Для этого Вы должны подписатся на все наши каналы. "
-                                                    "За это Вы получите уникальную ссылку. "
-                                                    "Эту реферальную ссылку Вы сможете прислать своим знакомым. "
-                                                    "За каждого нового пользователя мы начислим очки. "
-                                                    "Всё просто, чем больше очков, тем выше шансы на победу. 🏅"
-                                                    "Если Вы уже подписаны на наши каналы, то просто нажмите"
-                                                    "`Получить реферальную ссылку`",
-                                                    reply_markup=show_url_sub())
-
-            chek_sub_channel(bot.get_chat_member(chat_id=CHANEL_ID, user_id=message.chat.id),
+            url = chek_sub_channel(bot.get_chat_member(chat_id=CHANEL_ID, user_id=message.chat.id),
                             bot.get_chat_member(chat_id=GRUPP_ID, user_id=message.chat.id),
-                            message.chat.id,
+                            message=message,
+                            chat_id=message.chat.id,
                             ref_id=id_refer
                             )
+
+            if url != None:
+                bot.edit_message_text(chat_id=message.chat.id, 
+                                    message_id=message.id,
+                                    text="Реферальная программа💎",
+                                    reply_markup=new_refer_menu(message.chat.id, url))
+            else:
+                pass
     elif regim == "close":
-        bot.send_message(message.chat.id, text="Добро пожаловать!✌🏻\n"
-                                                "Это бот долгожданного первого розыгрыша от команды TON ELEPHANT’S💎🐘\n"
-                                                "Мы проводим розыгрыш NFT\n\n"
-                                                "Сроки конкурса подошли к концу, а конкретно в 11:00 закрылся прием "
-                                                "новых участников. Сейчас Вы можете только подтвердить, что не являетесь ботом и посмотреть ваш счет\n"
-                                                "Для этого нажмите на кнопку: Я не робот\n\n"
-                                                "В 15:00 будут уже результаты розыгрыша😱🐘\n"
-                                                "Мы Вам вышлем Гугл таблицу, в которой Вы будете искать себя)",
-                                                reply_markup=show_data_user(message.chat.id))
+        bot.edit_message_text(chat_id=message.chat.id, 
+                              message_id=message.id,
+                              text="[Текст 3]",
+                              reply_markup=show_data_user(message.chat.id))
     elif regim == "konez":
-        bot.send_message(message.chat.id, text="Добро пожаловать!✌🏻\n"
-                                                "Это бот долгожданного первого розыгрыша от команды TON ELEPHANT’S💎🐘\n"
-                                                "Мы проводим розыгрыш NFT\n\n"
-                                                "Сроки конкурса подошли к концу, а конкретно в 11:00 закрылся прием "
-                                                "новых участников.", reply_markup=types.ReplyKeyboardRemove())
+        bot.send_message(message.chat.id, text="[Текст 4]", reply_markup=types.ReplyKeyboardRemove())
 
 def ChekUser(message, id_refer):
     global callback_capcha

@@ -293,7 +293,7 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
         data = datetime.now()
         now = datetime.now().minute
 
-        while (now <= data.minute + 1):
+        while (now < data.minute + 1):
             now = datetime.now().minute
             print("[DataMinute]", data.minute)
             print("[DataNow]", now)
@@ -491,6 +491,8 @@ def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Пол
 
             data_status = GetStatusNFT(ParamList.whitelist)
 
+            print(data_status)
+
             param["current_stage"]  = data_status[0]['current_stage']
             param["count_stage"]    = data_status[0]['count_stage']
             param["coast"]          = data_status[0]['prise']
@@ -516,7 +518,7 @@ def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Пол
     elif paramStat == ParamStatus.get_mainTON:
         return data_status[0]["ton_number"]
     
-def NewSale(id, count_nft, score, index):       # Запись в БД информации о будущей продажи
+def NewSale(id, count_nft, score, index=None):       # Запись в БД информации о будущей продажи
     # print("Param_Factor:", param_factor)
     try:
         with connection.cursor() as cursor:
