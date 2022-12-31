@@ -46,7 +46,7 @@ def Connect():     #Подключение к базе-данных
     try:
         connection = pymysql.connect(
             host=host,
-            port=port,
+            # port=port,
             user=user,
             password=password,
             database=db_name,
