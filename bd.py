@@ -141,7 +141,83 @@ def GetPlayLogin(message):
             
     except:
         Connect()
-        GetPlayLogin(message) 
+        GetPlayLogin(message)
+
+def GetShaLogin(message):
+    try:
+        with connection.cursor() as cursor:
+            print("[ID]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT EXISTS(SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}')")
+                row = cursor.fetchone()
+
+                print("[ROW]", row)
+
+                count_records = row[f"EXISTS(SELECT login FROM base_user WHERE telegramm_id = '{tg_id}')"]
+
+                print("[COUNT RECORDS]", count_records)
+
+                if count_records == 1:
+                    return "LOGIN"
+                
+                elif count_records == 0:
+                    return "NO LOGIN"
+
+                if  count_records == 1:
+
+                    tg_url = GetTelegrammURL(tg_id)
+
+                    print("[TG_URL]", tg_url)
+
+                    if tg_url != "Null":
+                        login = tg_url[1:] + "_" + str(tg_id)[-3:]
+                    else:
+                        login = "User_" + str(tg_id)
+
+                    cursor.execute(f"UPDATE base_user SET login = '{login}' WHERE telegramm_id= '{tg_id}'")
+                    connection.commit()
+
+                    print("[LOGIN]", login)
+                else:
+                    cursor.execute(f"SELECT login FROM base_user WHERE telegramm_id = '{tg_id}'")
+                    row = cursor.fetchone()
+                    login = row["login"]
+                
+                key = str(random.randint(0, 1000000000)) + login + "@TONELEPHANTS" + str(random.randint(0, 1000000000)) + 2 * login
+                print("[KEY]", key)
+
+                salt = uuid.uuid4().hex
+
+
+                hach = hashlib.sha256(key.encode())
+                key_hach = hach.hexdigest()
+
+                print("[KEY HACH]", key_hach)
+
+
+                cursor.execute(f"UPDATE base_user SET pass_key = '{key_hach}' WHERE telegramm_id= '{tg_id}'")
+
+                print("[BASE DATA]", "SUCCSES")
+
+                nameFile = login + ".txt"
+
+                print("[FILE]", nameFile)
+
+                with open(f"users_key/{nameFile}", "w") as File:
+                    pass
+
+                connection.commit()
+                
+                return login
+
+            except:
+                return "EROR"
+            
+    except:
+        Connect()
+        GetPlayLogin(message)  
 
 def WaitPassword(message):
     try:
@@ -218,6 +294,22 @@ def ToWriteNumberScore(id, adress): # Запись номера тон счет�
     except:
         Connect()
         NewUserNFT(id)
+
+def ToWriteLoginPass(id, login, passwd):
+    try:
+        with connection.cursor() as cursor:
+
+            hach_log = hashlib.sha256(login.encode())
+            login_sha = hach_log.hexdigest()
+
+            hach_pass =  hashlib.sha256(passwd.encode())
+            pass_sha = hach_pass.hexdigest()
+            
+            cursor.execute(f"UPDATE base_user SET login_sha = '{login_sha}' WHERE telegramm_id= '{id}'")
+            connection.commit()
+    except:
+        Connect()
+        ToWriteLoginPass(id, login, passwd)
     
 
 def GetReadNumberScore(id):         # Получение номера тон счета
@@ -381,6 +473,35 @@ def GetScore(id : int):   # Получение количества куплен
                 return count_nft
             except:
                 return "Вы ещё ничего не купили"
+
+
+def GetScoreNFT_Play(id : int):   # Получение количества купленных NFT
+    try:
+        # ton_number = GetReadNumberScore(id)
+        with connection.cursor() as cursor:
+            try:
+                
+
+                cursor.execute(f"SELECT `type` FROM `shop_user` WHERE `telegramm_id`= '{id}'")
+                row = cursor.fetchall()
+
+
+                return "YES"
+            except:
+                return "NO"
+    except:
+        Connect()
+        with connection.cursor() as cursor:
+            try:
+                
+
+                cursor.execute(f"SELECT `type` FROM `shop_user` WHERE `telegramm_id`= '{id}'")
+                row = cursor.fetchall()
+
+
+                return "YES"
+            except:
+                return "NO"
 
 def GetConfigNFT():                 # Получение настроек продаж
     try:
@@ -569,7 +690,7 @@ def SetCapcha(id, capcha_id, id_refer):
                 if  count_records == 0:
                     cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `capcha_id`,`refer_id`) VALUES ('{id}','{capcha_id}', '{id_refer}')")
                 else:
-                    cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
+                    cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}', `refer_id`='{id_refer}' WHERE telegramm_id = '{id}'")
             
             except:
                 pass

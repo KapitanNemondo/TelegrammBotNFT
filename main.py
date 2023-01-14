@@ -52,7 +52,28 @@ def getUserAdressNFT(message):
                                 reply_markup = markup)
     return mesg
 
+def getUserLoginPassword(message):
     
+    markup = types.InlineKeyboardMarkup()
+    # Yes = types.InlineKeyboardButton("Да", callback_data="Edit score: YES")
+    # No = types.InlineKeyboardButton("Нет", callback_data="Edit score: NO")
+    # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+
+
+    # number_score.append(message.text)
+
+    markup.add(Back)
+    # bot.send_message(message.chat.id, text="Введите номер вашего счета, если он совпадает с выведенными номером, "
+    #                                  "нажми Да, если нет, то Нет", reply_markup = markup)
+    mesg = bot.edit_message_text(chat_id=message.chat.id, 
+                                message_id=message.id, 
+                                text="""
+Введите номер вашего TON-кошелька💎
+Если он совпадает с выведенным номером, то нажмите «✅ Да», если не совпадает, то нажмите «❌ Нет»
+                                """,
+                                reply_markup = markup)
+    return mesg
 
 # Получение номера тон счета, режим 4
 def getQ(message):
@@ -71,6 +92,22 @@ def getQ(message):
     return markup
 
 
+
+def getLogin(message):
+
+    markup = types.InlineKeyboardMarkup()
+    Yes = types.InlineKeyboardButton("Да", callback_data="Edit LoginPass: YES")
+    No = types.InlineKeyboardButton("Нет", callback_data="Edit LoginPass: NO")
+    # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+
+
+    # number_score.append(message.text)
+
+    markup.add(Yes, No, Back)
+
+    return markup
+
 # Меню покупки, режим 3
 def BuyNFT(message, count):
                 
@@ -82,7 +119,7 @@ def BuyNFT(message, count):
     #     if param["param_factor"][index] == count and param["param_status"][index] == 'идёт в данный момент' and (param["param_avalible"][index] - param["param_sale"][index]) > 0:
 
     if count == 1:
-        score = 1
+        score = 20
 
     elif count == 3:
         score = 55
@@ -163,6 +200,17 @@ def ChekScore(message):
                              f"{message.text}",
                         reply_markup=getQ(message))
 
+def LoginPass(message):
+    text = message.text
+    login = text[:text.find("\n")]
+    passwd = text[text.find("\n"):]
+
+    bot.send_message(message.chat.id,
+                        text="Ваш логин и пароль совпадают?\n"
+                             f"`{login}\n{passwd}`",
+                             parse_mode="Markdown",
+                        reply_markup=getLogin(message))
+
 
 def GoPlay(message):
     login = bd.GetPlayLogin(message)
@@ -177,6 +225,38 @@ def GoPlay(message):
     else:
         bot.send_message(message.chat.id, text="Доступ запрещен")
         BackMenu(message)
+
+def StartPlay(message):
+
+    login_verifity = bd.GetShaLogin(message)
+
+    if login_verifity == "LOGIN":
+
+
+        bot.send_message(message.chat.id, text=f"Вы уже зарегестрированы в системе\n"
+                                                "Повторное получение логина невозможно\n"
+                                                "Для входа в личный кабинет пришлите ваш логин и пароль в одном сообщение, но с разных строк\n"
+                                                "Пример\n\n"
+                                                "`Ivan45\nkapusta`", parse_mode="Markdown")
+    
+    elif login_verifity == "NO LOGIN":
+        chek_buy = bd.GetScoreNFT_Play(message.chat.id)
+
+        if chek_buy == "YES":
+            bot.send_message(message.chat.id,
+                             text=f"Вы купили NFT из нашей коллекции\n"
+                                    "За это вы получаете доступ к игре\n"
+                                    "Для Регистрации в игре создайте логин и пароль, после чего отправьте боту в слудующем формате:\n"
+                                    "Пример\n\n"
+                                    "`Ivan45\nkapusta`", parse_mode="Markdown")
+
+        elif chek_buy == "NO":
+            bot.send_message(message.chat.id,
+                             text="Вы ещё не купили ни одной NFT из нашей коллекции, купите для авторизации в игре\n",
+                            reply_markup=BackMenu(message))
+    
+
+    
 
 
 # Обработка команд
@@ -201,7 +281,7 @@ def ChekCapcha(call):
             # print(call.message.chat.id)
 
             bot.send_photo(chat_id=call.message.chat.id,
-                           photo=open("photo\ded_moroz.jpg", "rb"),
+                           photo=open("photo/ded_moroz.jpg", "rb"),
                            caption="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.HellouText(call.message.chat.id)),
                            reply_markup=markup)
 
@@ -314,6 +394,26 @@ def ChekCapcha(call):
         # flag_text = False
         # number_score.clear()
         # ChekMenu(call.message)
+    
+    elif call.data == "Edit LoginPass: YES":
+        index = call.message.text.find("\n") + 1
+        # print(call.message.text[index:])
+
+        text = call.message.text[index:]
+
+        login = text[:text.find("\n")]
+        passwd = text[text.find("\n"):]
+
+        bd.ToWriteLoginPass(call.message.chat.id, login, passwd)
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                                message_id=call.message.id, 
+                                text="Аккаунт успешно создан, не теряйте логин и пароль!", reply_markup=NFT_Menu(call.message))
+
+
+    elif call.data == "newlogin":
+        mesg = getUserLoginPassword(call.message)
+        bot.register_next_step_handler(mesg, ChekScore)
+    
 
     elif call.data == "Edit score: No":
         bot.edit_message_text(chat_id=call.message.chat.id, 
@@ -360,7 +460,7 @@ def ChekCapcha(call):
 Команда Ton Elephants🐘""".format(count = count)
 
             bot.send_photo(chat_id=call.message.chat.id,
-                           photo=open("photo\switer.jpg", "rb"),
+                           photo=open("photo/switer.jpg", "rb"),
                            caption=text,
                            reply_markup=NFT_Menu(call.message))
         else:
@@ -385,6 +485,13 @@ def ChekCapcha(call):
                                      "После чего Вам необходимо вставить логин в игру и дождатся когда бот пришёл код\n"
                                      "Если Вы входите в игру не первый раз, то Вы можете воспользоватся уже ранее плученным логином,"
                                      " если Вы забыли - можете запросить логин повторно",
+                                reply_markup=GoPlay(call.message))
+    
+    elif call.data == "Play":
+        bot.edit_message_text(chat_id=call.message.chat.id, 
+                              message_id=call.message.id,
+                                text="Чтобы войти в игру Вам необходимо иметь на Вашем счету хотя бы одну NFT из нашей коллекции\n"
+                                     "Если вы ещё не купили нашу NFT, то переходите в соотвествующее меню\n",
                                 reply_markup=GoPlay(call.message))
 
     elif call.data == "updateDate":
@@ -447,6 +554,9 @@ def ChekCapcha(call):
     elif call.data == "buy x10":
         BuyNFT(call.message, 10)
     
+    elif call.data == "getAllUser":
+        referal_sys.GetInfoUser()
+
     else:
         bot.send_message(call.message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BadText()))
     

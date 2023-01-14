@@ -11,7 +11,7 @@ CHANEL_ID = -1001688299683
 GRUPP_ID = -1001747825412
 """ID чата в котором бот проверяет наличие подписки"""
 
-main_url = 'https://t.me/ton_elephants_presale_bot?start='
+main_url = 'https://t.me/ton_elephants_bot?start='
 
 class InlineSet(enum.Enum):
     getReferUrl = 1
@@ -146,6 +146,8 @@ def chek_sub_channel(chat_member_chal, chat_member_grupp, chat_id, message, ref_
             baseRefer.UpdateCountRefer(ref_id, chat_id)
 
             getReferUrl = types.InlineKeyboardButton("🔗 Моя ссылка", callback_data="getReferUrl")
+
+            
 
             return getReferUrl
 
