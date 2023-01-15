@@ -193,6 +193,9 @@ def ChekShaLogin(message, login, password):
 
                 hach_pass =  hashlib.sha256(password.encode())
                 pass_sha = hach_pass.hexdigest()
+
+                print("[SHA LOGIN]", login_sha)
+                print("[SHA PASSW]", pass_sha)
                 
 
                 if sha_login_bd != login_sha and sha_passw_bd != pass_sha:
