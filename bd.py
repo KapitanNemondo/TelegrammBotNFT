@@ -155,7 +155,7 @@ def GetShaLogin(message):
 
                 print("[ROW]", row)
 
-                count_records = row[f"EXISTS(SELECT login FROM base_user WHERE telegramm_id = '{tg_id}')"]
+                count_records = row[f"EXISTS(SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}')"]
 
                 print("[COUNT RECORDS]", count_records)
 

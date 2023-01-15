@@ -42,7 +42,7 @@ def MainMenu(message):
     log_chat = types.InlineKeyboardButton(text='🗣 Наш чат', url='https://t.me/+4w1S6lz5c3s2MzJi')
 
 
-    btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="GoPlay")
+    btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="New Play")
 
     chat_id = message.chat.id
 
@@ -115,7 +115,7 @@ def NFT_Menu(message):      # Главное меню
 
     back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="BackToMain")
 
-    btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="GoPlay")
+    btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="New Play")
 
     chat_id = message.chat.id
 

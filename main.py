@@ -228,7 +228,11 @@ def GoPlay(message):
 
 def StartPlay(message):
 
+    print("[Start Play]")
+
     login_verifity = bd.GetShaLogin(message)
+
+    print("[Start Play :: login_verifity]", login_verifity)
 
     if login_verifity == "LOGIN":
 
@@ -487,12 +491,12 @@ def ChekCapcha(call):
                                      " если Вы забыли - можете запросить логин повторно",
                                 reply_markup=GoPlay(call.message))
     
-    elif call.data == "Play":
+    elif call.data == "New Play":
         bot.edit_message_text(chat_id=call.message.chat.id, 
                               message_id=call.message.id,
                                 text="Чтобы войти в игру Вам необходимо иметь на Вашем счету хотя бы одну NFT из нашей коллекции\n"
-                                     "Если вы ещё не купили нашу NFT, то переходите в соотвествующее меню\n",
-                                reply_markup=GoPlay(call.message))
+                                     "Если вы ещё не купили нашу NFT, то переходите в соотвествующее меню\n")
+        StartPlay(call.message)
 
     elif call.data == "updateDate":
         refer_id = referal_sys.baseRefer.GetIdRefer(call.message.chat.id)
