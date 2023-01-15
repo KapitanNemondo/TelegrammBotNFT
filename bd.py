@@ -331,6 +331,9 @@ def ToWriteLoginPass(id, login, passwd):
 
             hach_pass =  hashlib.sha256(passwd.encode())
             pass_sha = hach_pass.hexdigest()
+
+            print("[LOGIN] [", login, "]", sep="")
+            print("[PASSW] [", passwd, "]", sep="")
             
             cursor.execute(f"UPDATE base_user SET login_sha = '{login_sha}' WHERE telegramm_id= '{id}'")
             cursor.execute(f"UPDATE base_user SET pass_sha = '{pass_sha}' WHERE telegramm_id= '{id}'")
