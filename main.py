@@ -592,9 +592,8 @@ def start_handler(message):
 def boot_message(message):
     
     if message.chat.type == 'private':
-        
-        if message.text == '⬅️ Назад':
-            print("[User index Text]", message.text.index)
+
+        print("[User index Text]", message.text.index)
 
     
  
