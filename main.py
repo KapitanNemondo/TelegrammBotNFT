@@ -238,12 +238,14 @@ def ChekLoginPass(message):
 
     if result:
         bot.send_message(message.chat.id,
-                         text="Вы успешно вошли в систему")
+                         text="Вы успешно вошли в систему",
+                         reply_markup=PlayMenu(message))
         print("[LOGIN IN] Enter")
 
     elif result == False:
         bot.send_message(message.chat.id,
-                         text="Неверный логин или пароль")
+                         text="Неверный логин или пароль",
+                         reply_markup=BackMenu())
         print("[LOGIN IN] Faild")
 
     elif result == "Eror":
@@ -455,8 +457,8 @@ def ChekCapcha(call):
 
         text = call.message.text[index:]
 
-        login = text[:text.find("\n")]
-        passwd = text[text.find("\n"):]
+        login = text[7:text.find("\n")]
+        passwd = text[text.find("\n") + 9:]
 
         print("[LOGIN]", login)
 

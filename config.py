@@ -183,3 +183,35 @@ def show_data_user(chat_id):
     #     markup.add(score, getAutorization)
     
     return markup
+
+def BackMenu():
+    markup = types.InlineKeyboardMarkup()
+
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="BackToMain")
+
+    markup.add(back_Menu)
+    
+    return markup
+
+def PlayMenu(message):
+    markup = types.InlineKeyboardMarkup()
+
+    btn1 = types.InlineKeyboardButton("🛡 Настройки", callback_data="play settings")
+    btn2 = types.InlineKeyboardButton("🔑 Выйти на всех устройствах", callback_data="out all devices")
+    
+
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="BackToMain")
+
+    # btn5 = types.InlineKeyboardButton("🎮 Войти в игру", callback_data="New Play")
+
+    chat_id = message.chat.id
+
+    markup.add(btn1, btn2, back_Menu)
+
+    # for elem in admin_list:
+    #     if elem == chat_id:
+    #         markup.add(btn5)
+
+    
+
+    return markup
