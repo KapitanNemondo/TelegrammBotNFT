@@ -56,6 +56,19 @@ def MainMenu(message):
 
     return markup
 
+def PlayRegistrMenu(message):
+    markup = types.InlineKeyboardMarkup()
+
+    markup.row_width = 2
+
+    btn1 = types.InlineKeyboardButton("📱 Зарегестрироватся", callback_data="RegistrInPlay")
+    back_Menu = types.InlineKeyboardButton(text="⚙️ Вернутся в главное меню", callback_data="BackToMain")
+
+
+    markup.add(btn1, back_Menu)
+
+    return markup
+
 def new_refer_menu(chat_id, url):
     """Новое меню рефералов"""
     markup = types.InlineKeyboardMarkup()
