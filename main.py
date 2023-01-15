@@ -207,7 +207,7 @@ def ChekScore(message):
 def LoginPass(message):
     text = message.text
     login = text[:text.find("\n")]
-    passwd = text[text.find("\n"):]
+    passwd = text[text.find("\n") + 1:]
 
     bot.send_message(message.chat.id,
                         text="Ваш логин и пароль совпадают?\n"
