@@ -69,13 +69,8 @@ def getUserLoginPassword(message):
     mesg = bot.edit_message_text(chat_id=message.chat.id, 
                                 message_id=message.id, 
                                 text="""
-Для Регистрации в игре создайте логин и пароль, после чего отправьте боту в слудующем формате:
-Пример\n
-`Ivan45\nkapusta`,
-
 Если он совпадает с выведенным номером, то нажмите «✅ Да», если не совпадает, то нажмите «❌ Нет»
                                 """,
-                                parse_mode="Markdown",
                                 reply_markup = markup)
     return mesg
 
@@ -254,7 +249,12 @@ def StartPlay(message):
             bot.send_message(message.chat.id,
                              text=f"Вы купили NFT из нашей коллекции\n"
                                     "За это Вы поучаете доступ к игре\n"
-                                    "Чтобы создать аккаунт нажмите кнопку Зарегестироватся",
+                                    "Для Регистрации в игре создайте логин и пароль, после чего отправьте боту в слудующем формате:\n"
+                                    "Пример\n"
+                                    "`Ivan45\nkapusta`\n"
+
+                                    "После того как введёте нажмите на кнопку `Зарегестироватся`",
+                                    parse_mode="Markdown",
                                     reply_markup=PlayRegistrMenu(message))
 
         elif chek_buy == "NO":
