@@ -150,19 +150,19 @@ def GetShaLogin(message):
             try:
                 tg_id = int(message.chat.id)
 
-                cursor.execute(f"SELECT EXISTS(SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}')")
+                cursor.execute(f"SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}'")
                 row = cursor.fetchone()
 
                 print("[ROW]", row)
 
-                count_records = row[f"EXISTS(SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}')"]
+                # count_records = row[f"EXISTS(SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}')"]
 
-                print("[COUNT RECORDS]", count_records)
+                # print("[COUNT RECORDS]", count_records)
 
-                if count_records == 1:
+                if row["login_sha"] != None:
                     return "LOGIN"
                 
-                elif count_records == 0:
+                else:
                     return "NO LOGIN"
 
                 if  count_records == 1:
@@ -307,7 +307,7 @@ def ToWriteLoginPass(id, login, passwd):
             
             cursor.execute(f"UPDATE base_user SET login_sha = '{login_sha}' WHERE telegramm_id= '{id}'")
             cursor.execute(f"UPDATE base_user SET pass_sha = '{pass_sha}' WHERE telegramm_id= '{id}'")
-            
+
             connection.commit()
     except:
         Connect()
