@@ -420,7 +420,7 @@ def ChekCapcha(call):
 
     elif call.data == "RegistrInPlay":
         mesg = getUserLoginPassword(call.message)
-        bot.register_next_step_handler(mesg, LoginPass(call.message))
+        bot.register_next_step_handler(mesg, LoginPass)
     
 
     elif call.data == "Edit score: No":
