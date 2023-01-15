@@ -306,6 +306,8 @@ def ToWriteLoginPass(id, login, passwd):
             pass_sha = hach_pass.hexdigest()
             
             cursor.execute(f"UPDATE base_user SET login_sha = '{login_sha}' WHERE telegramm_id= '{id}'")
+            cursor.execute(f"UPDATE base_user SET pass_sha = '{pass_sha}' WHERE telegramm_id= '{id}'")
+            
             connection.commit()
     except:
         Connect()

@@ -69,9 +69,13 @@ def getUserLoginPassword(message):
     mesg = bot.edit_message_text(chat_id=message.chat.id, 
                                 message_id=message.id, 
                                 text="""
-Введите номер вашего TON-кошелька💎
+Для Регистрации в игре создайте логин и пароль, после чего отправьте боту в слудующем формате:
+Пример\n
+`Ivan45\nkapusta`,
+
 Если он совпадает с выведенным номером, то нажмите «✅ Да», если не совпадает, то нажмите «❌ Нет»
                                 """,
+                                parse_mode="Markdown",
                                 reply_markup = markup)
     return mesg
 
@@ -249,10 +253,9 @@ def StartPlay(message):
         if chek_buy == "YES":
             bot.send_message(message.chat.id,
                              text=f"Вы купили NFT из нашей коллекции\n"
-                                    "За это вы получаете доступ к игре\n"
-                                    "Для Регистрации в игре создайте логин и пароль, после чего отправьте боту в слудующем формате:\n"
-                                    "Пример\n\n"
-                                    "`Ivan45\nkapusta`", parse_mode="Markdown")
+                                    "За это Вы поучаете доступ к игре\n"
+                                    "Чтобы создать аккаунт нажмите кнопку Зарегестироватся",
+                                    reply_markup=PlayRegistrMenu(message))
 
         elif chek_buy == "NO":
             bot.send_message(message.chat.id,
@@ -414,9 +417,9 @@ def ChekCapcha(call):
                                 text="Аккаунт успешно создан, не теряйте логин и пароль!", reply_markup=NFT_Menu(call.message))
 
 
-    elif call.data == "newlogin":
+    elif call.data == "RegistrInPlay":
         mesg = getUserLoginPassword(call.message)
-        bot.register_next_step_handler(mesg, ChekScore)
+        bot.register_next_step_handler(mesg, LoginPass(call.message))
     
 
     elif call.data == "Edit score: No":
