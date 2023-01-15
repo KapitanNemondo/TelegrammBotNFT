@@ -58,7 +58,7 @@ def getUserLoginPassword(message):
     # Yes = types.InlineKeyboardButton("Да", callback_data="Edit score: YES")
     # No = types.InlineKeyboardButton("Нет", callback_data="Edit score: NO")
     # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
-    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="BackToMain")
 
 
     # number_score.append(message.text)
@@ -101,7 +101,7 @@ def getLogin(message):
     Yes = types.InlineKeyboardButton("Да", callback_data="Edit LoginPass: YES")
     No = types.InlineKeyboardButton("Нет", callback_data="Edit LoginPass: NO")
     # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
-    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="BackToMain")
 
 
     # number_score.append(message.text)
@@ -113,15 +113,15 @@ def getLogin(message):
 def SendLogin(message):
 
     markup = types.InlineKeyboardMarkup()
-    Yes = types.InlineKeyboardButton("Войти", callback_data="LoginPass: ENTER")
+    # Yes = types.InlineKeyboardButton("Войти", callback_data="LoginPass: ENTER")
     # No = types.InlineKeyboardButton("Нет", callback_data="Edit LoginPass: NO")
     # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
-    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="BackToMain")
 
 
     # number_score.append(message.text)
 
-    markup.add(Yes, Back)
+    markup.add(Back)
 
     return markup
 
