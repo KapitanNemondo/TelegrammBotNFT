@@ -95,8 +95,6 @@ def getQ(message):
 
     return markup
 
-
-
 def getLogin(message):
 
     markup = types.InlineKeyboardMarkup()
@@ -109,6 +107,21 @@ def getLogin(message):
     # number_score.append(message.text)
 
     markup.add(Yes, No, Back)
+
+    return markup
+
+def SendLogin(message):
+
+    markup = types.InlineKeyboardMarkup()
+    Yes = types.InlineKeyboardButton("Войти", callback_data="LoginPass: ENTER")
+    # No = types.InlineKeyboardButton("Нет", callback_data="Edit LoginPass: NO")
+    # ChekNumber = types.InlineKeyboardButton("Проверить", callback_data="Edit score: Chek")
+    Back = types.InlineKeyboardButton('⬅️ Назад', callback_data="Back")
+
+
+    # number_score.append(message.text)
+
+    markup.add(Yes, Back)
 
     return markup
 
@@ -216,6 +229,34 @@ def LoginPass(message):
                              parse_mode="Markdown",
                         reply_markup=getLogin(message))
 
+def ChekLoginPass(message):
+    text = message.text
+    login = text[:text.find("\n")]
+    passwd = text[text.find("\n") + 1:]
+
+    result = bd.ChekShaLogin(message, login, passwd)
+
+    if result:
+        bot.send_message(message.chat.id,
+                         text="Вы успешно вошли в систему")
+        print("[LOGIN IN] Enter")
+
+    elif result == False:
+        bot.send_message(message.chat.id,
+                         text="Неверный логин или пароль")
+        print("[LOGIN IN] Faild")
+
+    elif result == "Eror":
+        print("[LOGIN IN] EROR")
+
+    # bot.send_message(message.chat.id,
+    #                     text="Ваш логин и пароль совпадают?\n"
+    #                          f"Логин: `{login}`\n"
+    #                          f"Пароль: `{passwd}`",
+    #                          parse_mode="Markdown",
+    #                     reply_markup=getLogin(message))
+
+
 
 def GoPlay(message):
     login = bd.GetPlayLogin(message)
@@ -242,11 +283,16 @@ def StartPlay(message):
     if login_verifity == "LOGIN":
 
 
-        bot.send_message(message.chat.id, text=f"Вы уже зарегестрированы в системе\n"
+        mesg = bot.send_message(message.chat.id, text=f"Вы уже зарегестрированы в системе\n"
                                                 "Повторное получение логина невозможно\n"
                                                 "Для входа в личный кабинет пришлите ваш логин и пароль в одном сообщение, но с разных строк\n"
                                                 "Пример\n\n"
-                                                "`Ivan45\nkapusta`", parse_mode="Markdown")
+                                                "`Ivan45\nkapusta`",
+                                                parse_mode="Markdown",
+                                                reply_markup=SendLogin(message))
+        
+        # mesg = getUserLoginPassword(message)
+        bot.register_next_step_handler(mesg, ChekLoginPass)
     
     elif login_verifity == "NO LOGIN":
         chek_buy = bd.GetScoreNFT_Play(message.chat.id)
@@ -421,6 +467,10 @@ def ChekCapcha(call):
     elif call.data == "RegistrInPlay":
         mesg = getUserLoginPassword(call.message)
         bot.register_next_step_handler(mesg, LoginPass)
+
+    # elif call.data == "LoginInPlay":
+    #     mesg = getUserLoginPassword(call.message)
+    #     bot.register_next_step_handler(mesg, ChekLoginPass)
     
 
     elif call.data == "Edit score: No":

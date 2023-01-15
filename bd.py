@@ -165,59 +165,48 @@ def GetShaLogin(message):
                 else:
                     return "NO LOGIN"
 
-                if  count_records == 1:
+            except:
+                return "EROR"
+            
+    except:
+        Connect()
+        GetShaLogin(message)
 
-                    tg_url = GetTelegrammURL(tg_id)
 
-                    print("[TG_URL]", tg_url)
+def ChekShaLogin(message, login, password):
+    try:
+        with connection.cursor() as cursor:
+            print("[ID Chel Login]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
 
-                    if tg_url != "Null":
-                        login = tg_url[1:] + "_" + str(tg_id)[-3:]
-                    else:
-                        login = "User_" + str(tg_id)
+                cursor.execute(f"SELECT login_sha, pass_sha FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
 
-                    cursor.execute(f"UPDATE base_user SET login = '{login}' WHERE telegramm_id= '{tg_id}'")
-                    connection.commit()
+                print("[ROW]", row)
 
-                    print("[LOGIN]", login)
+                sha_login_bd = row["login_sha"]
+                sha_passw_bd = row["pass_sha"]
+
+                hach_log = hashlib.sha256(login.encode())
+                login_sha = hach_log.hexdigest()
+
+                hach_pass =  hashlib.sha256(password.encode())
+                pass_sha = hach_pass.hexdigest()
+                
+
+                if sha_login_bd != login_sha and sha_passw_bd != pass_sha:
+                    return True
+                
                 else:
-                    cursor.execute(f"SELECT login FROM base_user WHERE telegramm_id = '{tg_id}'")
-                    row = cursor.fetchone()
-                    login = row["login"]
-                
-                key = str(random.randint(0, 1000000000)) + login + "@TONELEPHANTS" + str(random.randint(0, 1000000000)) + 2 * login
-                print("[KEY]", key)
-
-                salt = uuid.uuid4().hex
-
-
-                hach = hashlib.sha256(key.encode())
-                key_hach = hach.hexdigest()
-
-                print("[KEY HACH]", key_hach)
-
-
-                cursor.execute(f"UPDATE base_user SET pass_key = '{key_hach}' WHERE telegramm_id= '{tg_id}'")
-
-                print("[BASE DATA]", "SUCCSES")
-
-                nameFile = login + ".txt"
-
-                print("[FILE]", nameFile)
-
-                with open(f"users_key/{nameFile}", "w") as File:
-                    pass
-
-                connection.commit()
-                
-                return login
+                    return False
 
             except:
                 return "EROR"
             
     except:
         Connect()
-        GetPlayLogin(message)  
+        ChekShaLogin(message) 
 
 def WaitPassword(message):
     try:
