@@ -206,7 +206,8 @@ def LoginPass(message):
 
     bot.send_message(message.chat.id,
                         text="Ваш логин и пароль совпадают?\n"
-                             f"`{login}\n{passwd}`",
+                             f"Логие:`{login}\n"
+                             f"Пароль:{passwd}`",
                              parse_mode="Markdown",
                         reply_markup=getLogin(message))
 
@@ -403,7 +404,7 @@ def ChekCapcha(call):
         # ChekMenu(call.message)
     
     elif call.data == "Edit LoginPass: YES":
-        index = call.message.text.find("\n") + 1
+        index = call.message.text.find("\n") + 3
         # print(call.message.text[index:])
 
         text = call.message.text[index:]
@@ -587,18 +588,13 @@ def start_handler(message):
 
 
     
-# @bot.message_handler(content_types=['text'])
-# def boot_message(message):
+@bot.message_handler(content_types=['text'])
+def boot_message(message):
     
-#     if message.chat.type == 'private':
+    if message.chat.type == 'private':
         
-#         if message.text == '⬅️ Назад':
-#             bot.send_message(message.chat.id, text="Отмена операции", reply_markup=DotMenu(message))
-#             bot.send_message(message.chat.id, text="Главное меню", reply_markup=NFT_Menu(message))
-
-        
-#         elif message.text[:8] == 'Купить x':
-#             BuyNFT(message)
+        if message.text == '⬅️ Назад':
+            print("[User index Text]", message.text.index)
 
     
  
