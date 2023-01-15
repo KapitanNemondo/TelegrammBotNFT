@@ -185,14 +185,14 @@ def ChekShaLogin(message, login, password):
 
                 print("[ROW]", row)
 
-                sha_login_bd = row["login_sha"]
-                sha_passw_bd = row["pass_sha"]
+                sha_login_bd = str(row["login_sha"])
+                sha_passw_bd = str(row["pass_sha"])
 
                 hach_log = hashlib.sha256(login.encode())
-                login_sha = hach_log.hexdigest()
+                login_sha = str(hach_log.hexdigest())
 
                 hach_pass =  hashlib.sha256(password.encode())
-                pass_sha = hach_pass.hexdigest()
+                pass_sha = str(hach_pass.hexdigest())
 
                 print("[SHA LOGIN]", login_sha)
                 print("[SHA PASSW]", pass_sha)
