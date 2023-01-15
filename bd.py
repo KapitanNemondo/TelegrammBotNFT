@@ -176,6 +176,7 @@ def GetShaLogin(message):
 def ChekShaLogin(message, login, password):
     try:
         with connection.cursor() as cursor:
+            print()
             print("[ID Chel Login]", message.chat.id)
             try:
                 tg_id = int(message.chat.id)
@@ -196,6 +197,9 @@ def ChekShaLogin(message, login, password):
 
                 print("[SHA LOGIN]", login_sha)
                 print("[SHA PASSW]", pass_sha)
+
+                print("[LOGIN] [", login, "]", sep="")
+                print("[PASSW] [", password, "]", sep="")
                 
 
                 if sha_login_bd == login_sha and sha_passw_bd == pass_sha:
