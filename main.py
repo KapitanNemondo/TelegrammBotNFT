@@ -458,6 +458,8 @@ def ChekCapcha(call):
         login = text[:text.find("\n")]
         passwd = text[text.find("\n"):]
 
+        print("[LOGIN]", login)
+
         bd.ToWriteLoginPass(call.message.chat.id, login, passwd)
         bot.edit_message_text(chat_id=call.message.chat.id, 
                                 message_id=call.message.id, 
