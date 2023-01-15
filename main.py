@@ -69,8 +69,13 @@ def getUserLoginPassword(message):
     mesg = bot.edit_message_text(chat_id=message.chat.id, 
                                 message_id=message.id, 
                                 text="""
+Для Регистрации в игре создайте логин и пароль, после чего отправьте боту в слудующем формате:
+Пример\n
+`Ivan45\nkapusta`,
+
 Если он совпадает с выведенным номером, то нажмите «✅ Да», если не совпадает, то нажмите «❌ Нет»
                                 """,
+                                parse_mode="Markdown",
                                 reply_markup = markup)
     return mesg
 
@@ -206,8 +211,8 @@ def LoginPass(message):
 
     bot.send_message(message.chat.id,
                         text="Ваш логин и пароль совпадают?\n"
-                             f"Логие:`{login}\n"
-                             f"Пароль:{passwd}`",
+                             f"Логин: `{login}`\n"
+                             f"Пароль: `{passwd}`",
                              parse_mode="Markdown",
                         reply_markup=getLogin(message))
 
@@ -250,12 +255,7 @@ def StartPlay(message):
             bot.send_message(message.chat.id,
                              text=f"Вы купили NFT из нашей коллекции\n"
                                     "За это Вы поучаете доступ к игре\n"
-                                    "Для Регистрации в игре создайте логин и пароль, после чего отправьте боту в слудующем формате:\n"
-                                    "Пример\n"
-                                    "`Ivan45\nkapusta`\n"
-
-                                    "После того как введёте нажмите на кнопку `Зарегестироватся`",
-                                    parse_mode="Markdown",
+                                    "Чтобы создать аккаунт нажмите кнопку Зарегестироватся",
                                     reply_markup=PlayRegistrMenu(message))
 
         elif chek_buy == "NO":
@@ -404,7 +404,7 @@ def ChekCapcha(call):
         # ChekMenu(call.message)
     
     elif call.data == "Edit LoginPass: YES":
-        index = call.message.text.find("\n") + 3
+        index = call.message.text.find("\n") + 1
         # print(call.message.text[index:])
 
         text = call.message.text[index:]
@@ -588,12 +588,18 @@ def start_handler(message):
 
 
     
-@bot.message_handler(content_types=['text'])
-def boot_message(message):
+# @bot.message_handler(content_types=['text'])
+# def boot_message(message):
     
-    if message.chat.type == 'private':
+#     if message.chat.type == 'private':
+        
+#         if message.text == '⬅️ Назад':
+#             bot.send_message(message.chat.id, text="Отмена операции", reply_markup=DotMenu(message))
+#             bot.send_message(message.chat.id, text="Главное меню", reply_markup=NFT_Menu(message))
 
-        print("[User index Text]", message.text.index)
+        
+#         elif message.text[:8] == 'Купить x':
+#             BuyNFT(message)
 
     
  
