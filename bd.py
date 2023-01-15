@@ -198,7 +198,7 @@ def ChekShaLogin(message, login, password):
                 print("[SHA PASSW]", pass_sha)
                 
 
-                if sha_login_bd != login_sha and sha_passw_bd != pass_sha:
+                if sha_login_bd == login_sha and sha_passw_bd == pass_sha:
                     return True
                 
                 else:
