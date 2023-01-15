@@ -206,7 +206,34 @@ def ChekShaLogin(message, login, password):
             
     except:
         Connect()
-        ChekShaLogin(message) 
+        with connection.cursor() as cursor:
+            print("[ID Chel Login]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT login_sha, pass_sha FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+
+                print("[ROW]", row)
+
+                sha_login_bd = row["login_sha"]
+                sha_passw_bd = row["pass_sha"]
+
+                hach_log = hashlib.sha256(login.encode())
+                login_sha = hach_log.hexdigest()
+
+                hach_pass =  hashlib.sha256(password.encode())
+                pass_sha = hach_pass.hexdigest()
+                
+
+                if sha_login_bd != login_sha and sha_passw_bd != pass_sha:
+                    return True
+                
+                else:
+                    return False
+
+            except:
+                return "EROR"
 
 def WaitPassword(message):
     try:
