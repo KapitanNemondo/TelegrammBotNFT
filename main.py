@@ -618,6 +618,10 @@ def ChekCapcha(call):
     
     elif call.data == "getAllUser":
         referal_sys.GetInfoUser()
+    
+    elif call.data == "ref_stageMap":
+        
+        GetStageMap(call.message)
 
     else:
         bot.send_message(call.message.chat.id, text="💎TON ELEPHANTS💎\nПривет, {0.first_name}!\n{message}".format(call.from_user, message=ms.BadText()))

@@ -268,3 +268,6 @@ def ChekUser(message, id_refer):
                     reply_markup=markup
     )
     
+
+def GetStageMep(message):
+    pass

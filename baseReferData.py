@@ -371,3 +371,28 @@ def SetCountRefer(id_refer, id_user):
     except:
         Connect()
         UpdateCountRefer(id_refer, id_user)
+
+
+def GetReferStatus(tg_id):
+    """Получения информации о рефере согласно бонусной программе
+    `set_count` - количество приглашенных пользователей,
+    `flag_open` - использовалась ли реф программа,
+    `stage` - уровень бонусов
+    """                 
+    try:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT set_count, flag_open, stage FROM `referal_chek` WHERE `tg_id_ref`= '{tg_id}'")
+                row = cursor.fetchone()
+                return row['set_count'], row['flag_open'], row['stage']
+            except:
+                pass
+    except:
+        Connect()
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT set_count, flag_open, stage FROM `referal_chek` WHERE `tg_id_ref`= '{tg_id}'")
+                row = cursor.fetchone()
+                return row['set_count'], row['flag_open'], row['stage']
+            except:
+                pass 

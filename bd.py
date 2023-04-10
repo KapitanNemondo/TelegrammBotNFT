@@ -295,7 +295,7 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
                 # row = cursor.fetchall()
                 # id_user = row['max']
                 # id_user += 1 
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`, `login`, `pass_key`) VALUES ('{id_tg}','{teg}','', '', '')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `energy`, `ton_number`, `login_sha`, `pass_sha`) VALUES ('{id_tg}','{teg}','{100}', '', '', '')")
             except:
                 pass
             connection.commit()
@@ -308,7 +308,8 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
                 # row = cursor.fetchall()
                 # id_user = row['max']
                 # id_user += 1 
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`, `login`, `pass_key`) VALUES ('{id_tg}','{teg}','', '', '')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `energy`, `ton_number`, `login_sha`, `pass_sha`) VALUES ('{id_tg}','{teg}','{100}', '', '', '')")
+                
             except:
                 pass
             connection.commit()
