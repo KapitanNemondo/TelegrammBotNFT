@@ -7,7 +7,7 @@ import uuid
 
 from ton_parser.parser import filter_Transaction
 from datetime import datetime
-from config import host, port, user, password, db_name, admin_list
+from presetBase import host, port, user, password, db_name, admin_list
 
 NFT_name = ['Common', 'Rare', 'Epic', 'Legedary', 'Exclusive']
 

@@ -1,6 +1,6 @@
 import pymysql
 import random
-from config import host, port, user, password, db_name, admin_list
+from presetBase import host, port, user, password, db_name, admin_list
 
 
 out = "Tg_id_ref        count_refer\n"
