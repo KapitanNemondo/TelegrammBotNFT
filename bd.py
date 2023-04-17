@@ -2,10 +2,12 @@ from turtle import get_shapepoly
 import pymysql
 import random
 import enum
+import hashlib
+import uuid
 
 from ton_parser.parser import filter_Transaction
 from datetime import datetime
-from config import host, port, user, password, db_name
+from presetBase import host, port, user, password, db_name, admin_list
 
 NFT_name = ['Common', 'Rare', 'Epic', 'Legedary', 'Exclusive']
 
@@ -44,17 +46,244 @@ def Connect():     #Подключение к базе-данных
     try:
         connection = pymysql.connect(
             host=host,
-            port=port,
+            # port=port,
             user=user,
             password=password,
             database=db_name,
             cursorclass=pymysql.cursors.DictCursor
         )
-        print("[DataBase] Succsfull Connect...")
+        print(f"[DataBase - {db_name}] Succsfull Connect...")
     except Exception as ex:
-        print("[DataBase] Connection refused...")
-        print("[DataBase]", ex)
+        print(f"[DataBase - {db_name}] Connection refused...")
+        print(f"[DataBase - {db_name}]", ex)
 
+def GetTelegrammURL(tg_id):
+    try:
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(f"SELECT telegramm_url FROM `base_user` WHERE telegramm_id= '{tg_id}'")
+                row = cursor.fetchone()
+                if len(row['telegramm_url']) > 0 or row['telegramm_url'] != '':
+                    return row['telegramm_url']
+                else:
+                    return "Null"
+            except:
+                return "Null"
+    except:
+        Connect()
+        GetTelegrammURL(tg_id)
+
+def GetPlayLogin(message):
+    try:
+        with connection.cursor() as cursor:
+            print("[ID]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT EXISTS(SELECT login FROM base_user WHERE telegramm_id = '{tg_id}')")
+                row = cursor.fetchone()
+
+                print("[ROW]", row)
+
+                count_records = row[f"EXISTS(SELECT login FROM base_user WHERE telegramm_id = '{tg_id}')"]
+
+                print("[COUNT RECORDS]", count_records)
+
+                if  count_records == 1:
+
+                    tg_url = GetTelegrammURL(tg_id)
+
+                    print("[TG_URL]", tg_url)
+
+                    if tg_url != "Null":
+                        login = tg_url[1:] + "_" + str(tg_id)[-3:]
+                    else:
+                        login = "User_" + str(tg_id)
+
+                    cursor.execute(f"UPDATE base_user SET login = '{login}' WHERE telegramm_id= '{tg_id}'")
+                    connection.commit()
+
+                    print("[LOGIN]", login)
+                else:
+                    cursor.execute(f"SELECT login FROM base_user WHERE telegramm_id = '{tg_id}'")
+                    row = cursor.fetchone()
+                    login = row["login"]
+                
+                key = str(random.randint(0, 1000000000)) + login + "@TONELEPHANTS" + str(random.randint(0, 1000000000)) + 2 * login
+                print("[KEY]", key)
+
+                salt = uuid.uuid4().hex
+
+
+                hach = hashlib.sha256(key.encode())
+                key_hach = hach.hexdigest()
+
+                print("[KEY HACH]", key_hach)
+
+
+                cursor.execute(f"UPDATE base_user SET pass_key = '{key_hach}' WHERE telegramm_id= '{tg_id}'")
+
+                print("[BASE DATA]", "SUCCSES")
+
+                nameFile = login + ".txt"
+
+                print("[FILE]", nameFile)
+
+                with open(f"users_key/{nameFile}", "w") as File:
+                    pass
+
+                connection.commit()
+                
+                return login
+
+            except:
+                return "EROR"
+            
+    except:
+        Connect()
+        GetPlayLogin(message)
+
+def GetShaLogin(message):
+    try:
+        with connection.cursor() as cursor:
+            print("[ID]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+
+                print("[ROW]", row)
+
+                # count_records = row[f"EXISTS(SELECT login_sha FROM base_user WHERE telegramm_id = '{tg_id}')"]
+
+                # print("[COUNT RECORDS]", count_records)
+
+                if row["login_sha"] != None:
+                    return "LOGIN"
+                
+                else:
+                    return "NO LOGIN"
+
+            except:
+                return "EROR"
+            
+    except:
+        Connect()
+        GetShaLogin(message)
+
+
+def ChekShaLogin(message, login, password):
+    try:
+        with connection.cursor() as cursor:
+            print()
+            print("[ID Chel Login]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT login_sha, pass_sha FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+
+                print("[ROW]", row)
+
+                sha_login_bd = str(row["login_sha"])
+                sha_passw_bd = str(row["pass_sha"])
+
+                hach_log = hashlib.sha256(login.encode())
+                login_sha = str(hach_log.hexdigest())
+
+                hach_pass =  hashlib.sha256(password.encode())
+                pass_sha = str(hach_pass.hexdigest())
+
+                print("[SHA LOGIN]", login_sha)
+                print("[SHA PASSW]", pass_sha)
+
+                print("[LOGIN] [", login, "]", sep="")
+                print("[PASSW] [", password, "]", sep="")
+                
+
+                if sha_login_bd == login_sha and sha_passw_bd == pass_sha:
+                    return True
+                
+                else:
+                    return False
+
+            except:
+                return "EROR"
+            
+    except:
+        Connect()
+        with connection.cursor() as cursor:
+            print("[ID Chel Login]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT login_sha, pass_sha FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+
+                print("[ROW]", row)
+
+                sha_login_bd = row["login_sha"]
+                sha_passw_bd = row["pass_sha"]
+
+                hach_log = hashlib.sha256(login.encode())
+                login_sha = hach_log.hexdigest()
+
+                hach_pass =  hashlib.sha256(password.encode())
+                pass_sha = hach_pass.hexdigest()
+
+                print("[SHA LOGIN]", login_sha)
+                print("[SHA PASSW]", pass_sha)
+                
+                
+
+                if sha_login_bd != login_sha and sha_passw_bd != pass_sha:
+                    return True
+                
+                else:
+                    return False
+
+            except:
+                return "EROR"
+
+def WaitPassword(message):
+    try:
+        with connection.cursor() as cursor:
+            print("[ID]", message.chat.id)
+            try:
+                tg_id = int(message.chat.id)
+
+                cursor.execute(f"SELECT login FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+                login = row["login"]
+
+                cursor.execute(f"SELECT pass_key FROM base_user WHERE telegramm_id = '{tg_id}'")
+                row = cursor.fetchone()
+                key = row["pass_key"]
+
+                nameFile = login + ".txt"
+
+                print("[FILE]", nameFile)
+
+                data = datetime.now()
+                now = datetime.now().minute
+
+                while (now <= data.minute + 5):
+
+                    with open(f"users_key/{nameFile}", "r") as File:
+                            dataFile = File.read()
+                            if dataFile != "":
+                                print("[KEY GET]", dataFile)
+                                if dataFile == key:
+                                    return ["Enter Succses", key]
+                                return ["Enter Close", "EROR"]
+                return ["Time is over", 0]
+            except:
+                return ["EROR", 0]
+            
+    except:
+        Connect()
+        WaitPassword(message)
 
 def NewUserNFT(id_tg, teg):  # Добавление нового пользователя
     
@@ -66,7 +295,7 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
                 # row = cursor.fetchall()
                 # id_user = row['max']
                 # id_user += 1 
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`) VALUES ('{id_tg}','{teg}','')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `energy`, `ton_number`, `login_sha`, `pass_sha`) VALUES ('{id_tg}','{teg}','{100}', '', '', '')")
             except:
                 pass
             connection.commit()
@@ -79,7 +308,8 @@ def NewUserNFT(id_tg, teg):  # Добавление нового пользов�
                 # row = cursor.fetchall()
                 # id_user = row['max']
                 # id_user += 1 
-                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `ton_number`) VALUES ('{id_tg}','{teg}','')")
+                cursor.execute(f"INSERT INTO `base_user`(`telegramm_id`, `telegramm_url`, `energy`, `ton_number`, `login_sha`, `pass_sha`) VALUES ('{id_tg}','{teg}','{100}', '', '', '')")
+                
             except:
                 pass
             connection.commit()
@@ -92,6 +322,27 @@ def ToWriteNumberScore(id, adress): # Запись номера тон счет�
     except:
         Connect()
         NewUserNFT(id)
+
+def ToWriteLoginPass(id, login, passwd):
+    try:
+        with connection.cursor() as cursor:
+
+            hach_log = hashlib.sha256(login.encode())
+            login_sha = hach_log.hexdigest()
+
+            hach_pass =  hashlib.sha256(passwd.encode())
+            pass_sha = hach_pass.hexdigest()
+
+            print("[LOGIN] [", login, "]", sep="")
+            print("[PASSW] [", passwd, "]", sep="")
+            
+            cursor.execute(f"UPDATE base_user SET login_sha = '{login_sha}' WHERE telegramm_id= '{id}'")
+            cursor.execute(f"UPDATE base_user SET pass_sha = '{pass_sha}' WHERE telegramm_id= '{id}'")
+
+            connection.commit()
+    except:
+        Connect()
+        ToWriteLoginPass(id, login, passwd)
     
 
 def GetReadNumberScore(id):         # Получение номера тон счета
@@ -167,7 +418,7 @@ def ToWriteBdNFT(id): # Проверка транзакции, в случае �
         data = datetime.now()
         now = datetime.now().minute
 
-        while (now <= data.minute + 1):
+        while (now < data.minute + 1):
             now = datetime.now().minute
             print("[DataMinute]", data.minute)
             print("[DataNow]", now)
@@ -255,6 +506,35 @@ def GetScore(id : int):   # Получение количества куплен
                 return count_nft
             except:
                 return "Вы ещё ничего не купили"
+
+
+def GetScoreNFT_Play(id : int):   # Получение количества купленных NFT
+    try:
+        # ton_number = GetReadNumberScore(id)
+        with connection.cursor() as cursor:
+            try:
+                
+
+                cursor.execute(f"SELECT `type` FROM `shop_user` WHERE `telegramm_id`= '{id}'")
+                row = cursor.fetchall()
+
+
+                return "YES"
+            except:
+                return "NO"
+    except:
+        Connect()
+        with connection.cursor() as cursor:
+            try:
+                
+
+                cursor.execute(f"SELECT `type` FROM `shop_user` WHERE `telegramm_id`= '{id}'")
+                row = cursor.fetchall()
+
+
+                return "YES"
+            except:
+                return "NO"
 
 def GetConfigNFT():                 # Получение настроек продаж
     try:
@@ -365,6 +645,8 @@ def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Пол
 
             data_status = GetStatusNFT(ParamList.whitelist)
 
+            print(data_status)
+
             param["current_stage"]  = data_status[0]['current_stage']
             param["count_stage"]    = data_status[0]['count_stage']
             param["coast"]          = data_status[0]['prise']
@@ -390,7 +672,7 @@ def GetParam(paramStat : ParamStatus, index = None, tg_id = None):      # Пол
     elif paramStat == ParamStatus.get_mainTON:
         return data_status[0]["ton_number"]
     
-def NewSale(id, count_nft, score, index):       # Запись в БД информации о будущей продажи
+def NewSale(id, count_nft, score, index=None):       # Запись в БД информации о будущей продажи
     # print("Param_Factor:", param_factor)
     try:
         with connection.cursor() as cursor:
@@ -428,7 +710,7 @@ def GetCapcha(id):
         Connect()
         GetCapcha(id)
 
-def SetCapcha(id, capcha_id):
+def SetCapcha(id, capcha_id, id_refer):
     try:
         with connection.cursor() as cursor:
             try:
@@ -439,16 +721,16 @@ def SetCapcha(id, capcha_id):
                 # print(count_records)
 
                 if  count_records == 0:
-                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `capcha_id`) VALUES ('{id}','{capcha_id}')")
+                    cursor.execute(f"INSERT INTO `desired_purchase`(`telegramm_id`, `capcha_id`,`refer_id`) VALUES ('{id}','{capcha_id}', '{id_refer}')")
                 else:
-                    cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}' WHERE telegramm_id = '{id}'")
+                    cursor.execute(f"UPDATE `desired_purchase` SET `capcha_id`='{capcha_id}', `refer_id`='{id_refer}' WHERE telegramm_id = '{id}'")
             
             except:
                 pass
             connection.commit()
     except:
         Connect()
-        SetCapcha(id, capcha_id)
+        SetCapcha(id, capcha_id, id_refer)
 
 def GetAcsess(tg_id):
     try:

@@ -62,9 +62,11 @@ def filter_Transaction(amount : float, participant : str, minute):
 
 	no_out = tuple(parser.parse(end=datetime.now(), start=datetime(year=now.year, month=now.month, day=now.day, hour=now.hour, minute=minute)))
 	
-	out = list(filter(lambda pars : pars.amount == amount and pars.participant == participant, no_out))
+	# out = list(filter(lambda pars : pars.amount == amount and pars.participant == participant, no_out))
 
-	if len(out) != 0:
+	# print(no_out, len(no_out))
+
+	if len(no_out) != 0:
 		return True
 	else:
 		return False
